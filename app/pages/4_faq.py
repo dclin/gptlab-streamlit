@@ -1,5 +1,5 @@
 import streamlit as st 
-from app import app_component as au
+import app_component as au
 
 st.set_page_config(
     page_title="GPT Lab - FAQ",

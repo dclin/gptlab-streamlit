@@ -1,8 +1,8 @@
-from api import api_util_firebase as fu 
-from api import api_util_general as gu 
-from api import api_util_openai as ou
-from api import api_bots as bu 
-from api import api_users as uu
+import api_util_firebase as fu 
+import api_util_general as gu 
+import api_util_openai as ou
+import api_bots as bu 
+import api_users as uu
 import enum 
 # Testing only 
 # import streamlit as st 

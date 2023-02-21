@@ -1,10 +1,10 @@
 import streamlit as st 
-from api import api_bots as ab 
-from api import api_util_openai as ao 
+import api_bots as ab 
+import api_util_openai as ao 
 
-from app import app_user as uv 
-from app import app_component as au
-from app import app_utils as vutil
+import app_user as uv 
+import app_component as au
+import app_utils as vutil
 
 st.set_page_config(
     page_title="GPT Lab - Lab",

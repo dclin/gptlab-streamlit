@@ -1,9 +1,9 @@
 import streamlit as st 
-from app import app_user as vuser
-from app import app_utils as vutil
-from app import app_component as ac 
-from api import api_bots as abots 
-from api import api_sessions as asessions 
+import app_user as vuser
+import app_utils as vutil
+import app_component as ac 
+import api_bots as abots 
+import api_sessions as asessions 
 
 st.set_page_config(
     page_title="GPT Lab - Assistant",

@@ -1,6 +1,6 @@
-from api import api_util_firebase as fu 
-from api import api_util_general as gu 
-from api import api_util_openai as ou
+import api_util_firebase as fu 
+import api_util_general as gu 
+import api_util_openai as ou
 
 class users:
 

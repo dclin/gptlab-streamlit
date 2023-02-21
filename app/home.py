@@ -1,8 +1,4 @@
 import streamlit as st 
-import sys 
-sys.path += ['/api', '/app']
-
-
 
 st.set_page_config(
     page_title="GPT Lab",
@@ -11,8 +7,8 @@ st.set_page_config(
 )
 
 
-from app import app_user as uv 
-from app import app_component as au
+import app_user as uv 
+import app_component as au
 #import random as r 
 
 

@@ -1,8 +1,8 @@
 import streamlit as st 
-from app import app_user as lu 
-from api import api_bots as ab 
-from app import app_utils as au 
-from app import app_component as ac 
+import app_user as lu 
+import api_bots as ab 
+import app_utils as au 
+import app_component as ac 
 import random as r 
 
 st.set_page_config(

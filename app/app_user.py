@@ -1,6 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as c 
-from api import api_users as au 
+import api_users as au 
 
 legal_prompt = "If you have not done so, please review and agree to our Terms of Use and Privacy Policy, both of which are available on the Terms page. By signing in, you confirm that you have read and agreed to the Terms of Use and Privacy Policy."
 user_key_prompt = "Enter your OpenAI API key to get started. Keep it safe, as it'll be your key to coming back.  \nDon't have one yet? Create one at: https://platform.openai.com/account/api-keys."
