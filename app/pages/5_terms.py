@@ -18,7 +18,7 @@ st.sidebar.markdown('''
 ''', unsafe_allow_html=True)
 
 st.title("Terms")
-st.write("Last updated: 2023-02-17")
+st.write("Last updated: 2023-02-21")
 st.header("Terms of Use")
 
 st.info("""
@@ -44,7 +44,7 @@ At GPT Lab, we take your privacy very seriously. Our application only uses your 
 You agree to use GPT Lab only for lawful purposes and in accordance with these Terms of Service. Specifically, you agree not to: (a) violate any applicable law or regulation; (b) maliciously try to hack or break AI Assistants by using Prompt Injection techniques; (c) share bots that do not meet our user content standard; (d) break the system in any way.
 
 ##### 6. User Content  \n
-You retain ownership of all GPT-3 prompts created by you on GPT Lab. You agree not to create or share AI Assistants that: (a) violate any applicable law or regulation; (b) infringe on the intellectual property, privacy, or other rights of any person; (c) impersonate any person or entity in a manner that is intended to deceive or mislead others, unless the impersonation is clearly designated as parody or satire, or has written permission; (d) distribute or post spam, chain letters, or pyramid schemes; (e) promote, incite, or engage in hate speech, discriminatory behavior, or harassment of any kind based on race, gender, sexual orientation, religion, nationality, or any other personal characteristics.
+You retain ownership of all GPT-3 prompts created by you on GPT Lab. You agree not to create or share AI Assistants that: (a) violate any applicable law or regulation; (b) infringe on the intellectual property, privacy, or other rights of any person, except for prompts that are inspired by existing works or ideas and do not substantially copy the intellectual property of others or violate any intellectual property laws or regulations; (c) impersonate any person or entity in a manner that is intended to deceive or mislead others, unless the impersonation is clearly designated as parody or satire, or has written permission; (d) distribute or post spam, chain letters, or pyramid schemes; (e) promote, incite, or engage in hate speech, discriminatory behavior, or harassment of any kind based on race, gender, sexual orientation, religion, nationality, or any other personal characteristics.
 
 Additionally, we recommend that you do not create AI Assistants for use in heavily regulated fields, as the legal and ethical implications of such applications can be complex and far-reaching.
 
