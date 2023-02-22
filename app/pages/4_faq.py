@@ -84,7 +84,7 @@ with st.expander("How does GPT Lab ensure the security of my OpenAI API Key?"):
 
 with st.expander("Are there any restrictions on the type of AI Assistants that can be created in GPT Lab?"):
     st.markdown("""
-    Our Terms of Use have outlined some common sense restrictions you should follow. Please review our [Terms of Use](https://lab.gptlab.app/legal#terms-of-use) for more information. 
+    Our Terms of Use have outlined some common sense restrictions you should follow. Please review our Terms of Use, available on the Terms page, for more information. 
     Additionally, since our AI Assistants use the OpenAI language models, you should also comply with the [OpenAI Usage policies](https://platform.openai.com/docs/usage-policies).  \n
     We recommend avoiding creating AI Assistants for use in heavily regulated fields, as the legal and ethical implications of such applications can be complex and far-reaching.  \n
     Please note that GPT Lab does not assume any liability for the use of the AI Assistants you create using the platform. It is your responsibility to ensure that your AI Assistant complies with all applicable laws and regulations, and to use the platform at your own risk.
