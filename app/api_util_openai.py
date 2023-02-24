@@ -71,18 +71,18 @@ class open_ai:
             raise  
         
     # validate API key (by making a call to the get models endpoint)
-    @st.cache(show_spinner=False, suppress_st_warning=True,ttl=600)
-    def validate_key(self):
+    @st.cache_data(show_spinner=False, ttl=600)
+    def validate_key(_self):
         try:
-            models = self.get_models()
+            models = _self.get_models()
             return True
         except:
             return False 
 
     # main call to get bot response 
-    @st.cache(show_spinner=False, suppress_st_warning=True,ttl=30)
-    def get_completion(self, model_config_dict, message):
-        model_config_validated = self._validate_model_config(model_config_dict)
+    @st.cache_data(show_spinner=False, ttl=30)
+    def get_completion(_self, model_config_dict, message):
+        model_config_validated = _self._validate_model_config(model_config_dict)
         #key_validated = self.validate_key()
         key_validated = 1
 
@@ -105,19 +105,19 @@ class open_ai:
                     model_config_dict['top_p'],
                     model_config_dict['frequency_penalty'],
                     model_config_dict['presence_penalty'],
-                    self.stop_sequence
+                    _self.stop_sequence
                 )            
             
             try:
-                completions = self._invoke_call(get_completion_call_string)
+                completions = _self._invoke_call(get_completion_call_string)
                 return completions
             except Exception as e:
                 raise 
         else:
             if not model_config_validated:
-                raise self.ClientRequestError("Bad Requests. model_config_dict missing required fields")
+                raise _self.ClientRequestError("Bad Requests. model_config_dict missing required fields")
             if not key_validated:
-                raise self.ClientCredentialError("Credential authentication error. API key or token was invalid, expired, or revoked.")
+                raise _self.ClientCredentialError("Credential authentication error. API key or token was invalid, expired, or revoked.")
 
 
 # a = open_ai(api_key='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',restart_sequence='|USER|', stop_sequence='|SP|')

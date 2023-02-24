@@ -205,7 +205,7 @@ def render_lab_step_one():
     col1, col2, col3 = st.columns(3)
     col1.button("Start over", disabled=restart_disabled, on_click=handle_lab_restart)
     col2.button("Skip the test drive", disabled=advance_disabled, on_click=handler_lab_step_two_confirm)
-    col3.button("Test drive your AI", disabled=advance_disabled, on_click=handler_lab_step_one_confirm)
+    col3.button("Test drive your AI", disabled=advance_disabled, on_click=handler_lab_step_one_confirm, type="primary")
 
 
 def render_lab_step_two():
@@ -271,9 +271,9 @@ def render_lab_step_three():
     st.text_area(label="Description", key="lab_bot_description", help=help_msg_description, max_chars=250)
 
     bot_avatar_url = "https://api.dicebear.com/5.x/bottts-neutral/svg?seed={0}&radius=25".format('gptLAb') 
-    bot_name = '[AI Name]'
-    bot_tagline = '[Your Tag Line]'
-    bot_description = '[Your Description]'
+    bot_name = '[Name]'
+    bot_tagline = '[Tag Line]'
+    bot_description = '[Description]'
 
     if 'lab_bot_name' in st.session_state and st.session_state.lab_bot_name != "": 
         bot_avatar_url = "https://api.dicebear.com/5.x/bottts-neutral/svg?seed={0}&radius=25".format(st.session_state.lab_bot_name) 
@@ -289,7 +289,10 @@ def render_lab_step_three():
     st.markdown("##### Previews")
     col1, col2 = st.columns(2)
     col1.markdown("**Lounge preview**")
-    col1.image(bot_avatar_url, width=50)
+    with col1:
+        col1a, col1b = st.columns([1,5])
+        col1a.image(bot_avatar_url, width=50)
+        col1b.markdown(f"{bot_name} - {bot_tagline}")
     button_label="Chat with {0}".format(bot_name)
     button_key = "Factory_Bot_Preview"
     col1.write("{0}".format(bot_description))

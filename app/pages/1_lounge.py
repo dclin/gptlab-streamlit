@@ -27,20 +27,28 @@ def view_bot_grid(bot_dict, button_disabled=False, show_bot_id=False):
         button_label="Chat with {0}".format(bot_dict[i]['name'])
         button_key="Lounge_bot_{0}".format(bot_dict[i]["id"])
         if i%2 == 0:
-            col1.image(avatar_url, width=50)
+            with col1:
+                cola, colb = st.columns([1,5])
+                cola.image(avatar_url, width=50)
+                if show_bot_id == False:
+                    colb.markdown(f"{bot_dict[i]['name']} - {bot_dict[i]['tag_line']}")
+                else:
+                    colb.markdown(f"{bot_dict[i]['name']} - {bot_dict[i]['tag_line']}  \nAssistant ID: {bot_dict[i]['id']}")
             col1.write(bot_dict[i]['description'])
-            if show_bot_id == True:
-                col1.write("Assistant ID: {0}".format(bot_dict[i]['id']))
             if col1.button(button_label, key=button_key, disabled=button_disabled):
                 st.session_state.bot_info=bot_dict[i]
                 st.session_state.bot_validated = 1           
                 au.switch_page('assistant')
             col1.write("\n\n")
         else:
-            col2.image(avatar_url, width=50)
+            with col2:
+                col2a, col2b = st.columns([1,5])
+                col2a.image(avatar_url, width=50)
+                if show_bot_id == False:
+                    col2b.markdown(f"{bot_dict[i]['name']} - {bot_dict[i]['tag_line']}")
+                else:
+                    col2b.markdown(f"{bot_dict[i]['name']} - {bot_dict[i]['tag_line']}  \nAssistant ID: {bot_dict[i]['id']}")
             col2.write(bot_dict[i]['description'])
-            if show_bot_id == True:
-                col2.write("Assistant ID: {0}".format(bot_dict[i]['id']))
             if col2.button(button_label, key=button_key, disabled=button_disabled):
                 st.session_state.bot_info=bot_dict[i]
                 st.session_state.bot_validated = 1           
