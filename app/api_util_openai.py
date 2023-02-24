@@ -120,7 +120,26 @@ class open_ai:
                 raise _self.ClientCredentialError("Credential authentication error. API key or token was invalid, expired, or revoked.")
 
 
-# a = open_ai(api_key='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',restart_sequence='|USER|', stop_sequence='|SP|')
+    # call to get moderation 
+    def get_moderation(self, user_message):
+        #key_validated = self.validate_key()
+        key_validated = 1 
+
+        if key_validated:
+            get_moderation_call_string = ("""openai.Moderation.create(input="{0}")""".format(user_message))
+
+            try:
+                moderation = self._invoke_call(get_moderation_call_string)
+                moderation_result = moderation['results'][0]
+                flagged_categories = [category for category, value in moderation_result['categories'].items() if value]
+
+                return {'flagged': moderation_result['flagged'], 'flagged_categories':flagged_categories}
+            except Exception as e:
+                raise 
+
+# a = open_ai(api_key='',restart_sequence='|USER|', stop_sequence='|SP|')
+# message = "I hate my boss and all leadership in the new company!"
+# print(a.get_moderation(message))
 
 # print(a.validate_key())
 # print(a.get_models())

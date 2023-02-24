@@ -59,3 +59,5 @@ with col1:
 with col3:
     st.markdown('[Buy me a coffee](https://www.buymeacoffee.com/gptlab)')
     # au.buy_me_coffee_component()
+
+

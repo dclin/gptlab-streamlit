@@ -1,10 +1,14 @@
 import api_util_firebase as fu 
 import api_util_general as gu 
 import api_util_openai as ou
+#import streamlit as st 
 
 class users:
 
     class UserNotFound(Exception):
+        pass
+
+    class UserHashNotFound(Exception):
         pass
 
     class BadRequest(Exception):
@@ -34,10 +38,19 @@ class users:
         else:
             raise self.UserNotFound("User not found")
 
-    def get_users(self):
-        users = self.db.get_docs(collection_name="users")
-        if len(users) > 0 :
-            return users
+    def get_users(self, user_hash=None):
+        query_filters=[]
+
+        if user_hash:
+            query_filters = [("user_hash","==",user_hash)]
+
+        user_docs = self.db.get_docs(collection_name="users", query_filters=query_filters)
+
+        if user_docs == None:
+            raise self.DBError("Connection Problem: Try again later")
+
+        return user_docs 
+
 
     def update_user_stats(self, user_id, metric_value_pairs):
         user = self.get_user(user_id)
@@ -57,29 +70,45 @@ class users:
         for metric_value_pair in metric_value_pairs:
             self.db.increment_document_fields(collection_name="users", document_id=user_id, field_name=metric_value_pair[0], increment=metric_value_pair[1])
 
-    def create_user(self, api_key):
-        try:
-            user = self.find_user(user_string=api_key)
+
+    def create_user(self, user_hash):
+        user = self.get_users(user_hash=user_hash)
+
+        if len(user) > 0:
             raise self.BadRequest("Bad request: user exists")
-        except self.UserNotFound:
-            pass
-
-        o = ou.open_ai(api_key=api_key, restart_sequence='|USER|', stop_sequence='|SP|')
-        key_validated = o.validate_key()
-        if key_validated == False:
-            raise self.BadRequest("Bad request: OPENAI API Key Invalid")
-
-        user_hash = gu.hash_user_string(api_key)
 
         user_dict = {
             'user_hash': user_hash,
-            'user_hash_type': 'open_ai_key',
             'created_date': gu.get_current_time(),
             'last_modified_date': gu.get_current_time()
         }
 
-        user_id = self.db.create_doc(collection_name="users",data=user_dict, id=user_hash)
+        user_id = self.db.create_doc(collection_name="users",data=user_dict)
         return user_id 
+
+
+    def find_user_hash(self, user_hash):
+        user_hash_doc = self.db.get_doc(collection_name="user_hash", document_id=user_hash)
+        if user_hash_doc:     
+            return user_hash_doc
+        else:
+            raise self.UserHashNotFound("User Hash not found")
+
+
+    def create_user_hash(self, user_hash):
+        try:
+            user = self.find_user_hash(user_hash=user_hash)
+            raise self.BadRequest("Bad request: user hash exists")
+        except self.UserHashNotFound:
+            pass
+
+        user_hash_dict = {
+            'user_hash_type': 'open_ai_key',
+            'created_date': gu.get_current_time()
+        }
+
+        user_hash_id = self.db.create_doc(collection_name="user_hash",data=user_hash_dict, id=user_hash)
+        return user_hash_id 
 
 
     def get_create_user(self, api_key):
@@ -88,61 +117,25 @@ class users:
         if key_validated == False:
             raise self.OpenAIClientCredentialError("Bad request: OPENAI API Key Invalid")
 
-        try:
-            user = self.find_user(user_string=api_key)
-            return user
-        except self.UserNotFound:
-            pass
-
         user_hash = gu.hash_user_string(api_key)
 
-        user_dict = {
-            'user_hash': user_hash,
-            'user_hash_type': 'open_ai_key',
-            'created_date': gu.get_current_time(),
-            'last_modified_date': gu.get_current_time()
-        }
+        # first try to create a user_hash document using the hashed key 
+        try:
+            self.create_user_hash(user_hash=user_hash)
+        except self.BadRequest:
+            # swallows exception if user hash already exists 
+            pass 
 
-        user_id = self.db.create_doc(collection_name="users",data=user_dict, id=user_hash)
-
-        if not user_id:
-            raise self.DBRecordError("DB Record Error: user not created")       
-
-        user = self.get_user(user_id=user_id)
-
-        return user 
-
-
-## TEST 
-# u = users()
-
-# try:
-#     user_id = u.create_user(api_key='adfasdfsd')
-#     print(user_id)
-# except Exception as e:
-#     error_message = str(e)
-#     error_code = type(e).__name__
-#     print("Error message:", error_message)
-#     print("Error code:", error_code)
-
-
-# metric_value_pairs = [('sessions_started',5)]
-
-# try:
-#     u.update_user_stats('xxxxxx',metric_value_pairs)
-# except Exception as e:
-#     error_code = type(e).__name__
-#     print("Error code:", error_code )
-
-
-#print(u.get_users())
-
-# try:
-#     user_id = u.find_user('adfadsfd')
-#     print(user_id)
-# except Exception as e:
-#     error_message = str(e)
-#     error_code = type(e).__name__
-#     print("Error message:", error_message)
-#     print("Error code:", error_code)
-
+        try:
+            # create a user with user hash 
+            user_id = self.create_user(user_hash=user_hash)
+            # get user details 
+            user = self.get_user(user_id=user_id) 
+            return user 
+        except self.BadRequest:
+            # since user exists, just get user details 
+            user = self.get_users(user_hash=user_hash)
+            
+            if len(user) > 1:
+                raise self.BadRequest("Bad request: more than one user with API key")
+            return user[0] 

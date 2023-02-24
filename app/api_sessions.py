@@ -54,10 +54,11 @@ class sessions:
         LIKED = 1
 
 
-    def __init__(self):
+    def __init__(self, user_hash):
         self.db = fu.firestore_db()
         self.openai_stop_sequence = '|SP|'
         self.openai_restart_sequence = '|USER|'
+        self.user_hash = user_hash
 
     # main function to create a session 
     def create_session(self, user_id, bot_id, ai_key): 
@@ -153,7 +154,7 @@ class sessions:
                 self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
                 raise self.SessionAttributeNotUpdated("Bad request: session did not have last prompt recorded")
 
-            next_prompt = next_prompt + last_prompt['data']['message'] + user_message + self.openai_stop_sequence 
+            next_prompt = next_prompt + gu.decrypt_user_message(user_hash=self.user_hash, cipher_text=last_prompt['data']['message']) + user_message + self.openai_stop_sequence 
 
             # record the next prompt  
             try:
@@ -323,7 +324,7 @@ class sessions:
     # internal function to record a session prompt 
     def _record_session_prompt(self, session_id, prompt_message):
         prompt_dict = {
-            'message': prompt_message.replace("\n",""), 
+            'message': gu.encrypt_user_message(user_hash=self.user_hash, user_message=prompt_message.replace("\n","")), 
             'created_date': gu.get_current_time()
         }
 
@@ -339,7 +340,7 @@ class sessions:
     # internal function to recod a session message:
     def _record_session_message(self, session_id, message, is_user, total_token=None):
         msg_dict = {
-            'message':message.replace(self.openai_restart_sequence,"").replace(self.openai_stop_sequence,""),#.replace("\n","\\n"),
+            'message':gu.encrypt_user_message(user_hash=self.user_hash, user_message=message.replace(self.openai_restart_sequence,"").replace(self.openai_stop_sequence,"")),#.replace("\n","\\n"),
             'is_user':is_user,
             'created_date':gu.get_current_time()
         }
