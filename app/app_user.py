@@ -27,7 +27,7 @@ class app_user:
             st.markdown(legal_prompt)
             st.markdown("\n")
             st.info(user_key_prompt)
-            st.text_input("Enter your OpenAI API Key", key="user_key_input",on_change=self._validate_user_info)
+            st.text_input("Enter your OpenAI API Key", key="user_key_input",on_change=self._validate_user_info, type="password", autocomplete="current-password")
 
     def _validate_user_info(self):
         u = au.users()
