@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit.components.v1 as c 
 import api_users as au 
 
 legal_prompt = "If you have not done so, please review and agree to our Terms of Use and Privacy Policy, both of which are available on the Terms page. By signing in, you confirm that you have read and agreed to the Terms of Use and Privacy Policy."
