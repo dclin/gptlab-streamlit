@@ -19,8 +19,8 @@ class app_user:
     def _get_info(self):
         return st.session_state.user 
 
-    def _set_info(self, user_id, api_key):
-        st.session_state.user = {'id': user_id, 'api_key': api_key}
+    def _set_info(self, user_id, api_key, user_hash):
+        st.session_state.user = {'id': user_id, 'api_key': api_key, 'user_hash' : user_hash}
 
     def view_get_info(self):
         with self.container:
@@ -34,7 +34,7 @@ class app_user:
 
         try:
             user = u.get_create_user(api_key=st.session_state.user_key_input)           
-            self._set_info(user_id=user['id'], api_key = st.session_state.user_key_input)
+            self._set_info(user_id=user['id'], api_key = st.session_state.user_key_input, user_hash=user['data']['user_hash'])
             st.session_state.user_validated = 1 
         except u.OpenAIClientCredentialError as e:
             with self.container:
