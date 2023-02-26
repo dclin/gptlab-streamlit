@@ -51,15 +51,9 @@ else:
 st.markdown("\n")
 st.markdown("\n")
 
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 with col1:
-#    st.markdown('[Subscribe to news and updates](https://gptlab.beehiiv.com/subscribe)')
     au.st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
-#     au.email_subscription_component()
 
-with col3:
-#    st.markdown('[Buy me a coffee](https://www.buymeacoffee.com/gptlab)')
-    # au.buy_me_coffee_component()
+with col2:
     au.st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")
-
-
