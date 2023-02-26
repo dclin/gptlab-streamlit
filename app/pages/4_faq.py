@@ -45,13 +45,14 @@ with st.expander("How do I go about creating my own AI Assistant?"):
     st.markdown("You can create your AI Assistant in the Lab.")
 
 with st.expander("What is the initial prompt?"):
-    st.markdown("The initial prompt is the most crucial part of the AI Assistant design, as it sets the context for the conversation and guides the AI's responses. It is the hidden set of instructions for the AI. The initial prompt should clearly convey the topic or task that you would like the AI to focus on during the conversation. We recommend experimenting and testing out your prompt in ChatGPT or the OpenAI Playground first before creating your AI.")
+    st.markdown("The initial prompt is the most crucial part of the AI Assistant design, as it sets the context for the conversation and guides the AI's responses. It is the hidden set of instructions for the AI. The initial prompt should clearly convey the topic or task that you would like the AI to focus on during the conversation.")
 
 with st.expander("Do you have some recommendations on how to create good prompts?"):
     st.markdown("""
     Yes, here are few tips to creating effective prompts:  \n
     * Familiarize yourself with the best practices for prompt engineering, as outlined in this OpenAI article: https://help.openai.com/en/articles/6654000-best-practices-for-prompt-engineering-with-openai-api  \n
     * When creating a prompt for a GPT Lab AI Assistant, make sure to include instructions for the Assistant to introduce itself to the user first. This helps ensure a smooth and engaging chat session.  
+    * Test out your prompt in the Lab to ensure it accurately conveys the desired topic or task.   
     """)
 
 with st.expander("What contributes to an AI Assistant's personality?"):
@@ -77,10 +78,12 @@ with st.expander("What are the four advanced parameters that can fine-tune an AI
 st.markdown("#### Privacy, Platform Guidelines, and Intellectual Property")
 
 with st.expander("Is my information kept confidential on GPT Lab?"):
-    st.markdown("Yes, we take your privacy and confidentiality very seriously. We do not store any personally identifiable information, and instead use a secure hashing algorithm to store a hashed version of your OpenAI API Key. Additionally, session transcripts may be reviewed periodically for performance auditing, but all information is kept confidential and not tied to your specific identity.")
+    st.markdown("Yes, we take your privacy and confidentiality very seriously. We do not store any personally identifiable information, and instead use a secure hashing algorithm to store a hashed version of your OpenAI API Key. Additionally, session transcripts are encrypted.")
 
-with st.expander("How does GPT Lab ensure the security of my OpenAI API Key?"):
-    st.markdown("We use the SHA-256 PBKDF2 algorithm, a highly secure hashing algorithm, to hash your OpenAI API Key and store it securely. This ensures that your key is protected and cannot be used for any unauthorized purposes.")
+with st.expander("How does GPT Lab ensure the security of my information?"):
+    st.markdown("""We use the SHA-256 PBKDF2 algorithm, a highly secure one-way hashing algorithm, to hash your OpenAI API Key and store it securely. This ensures that your key is protected and cannot be used for any unauthorized purposes. 
+    
+Additionally, we use a symmetric AES-128 encryption algorithm, with a unique key for each user, to encrypt your chat transcripts with the AI Assistants.""")
 
 with st.expander("Are there any restrictions on the type of AI Assistants that can be created in GPT Lab?"):
     st.markdown("""
