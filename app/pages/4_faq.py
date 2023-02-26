@@ -98,9 +98,11 @@ st.write("\n")
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    st.markdown('[Subscribe to news and updates](https://gptlab.beehiiv.com/subscribe)')
-#     au.email_subscription_component()
+    #st.markdown('[Subscribe to news and updates](https://gptlab.beehiiv.com/subscribe)')
+    au.st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
+    #au.email_subscription_component()
 
 with col3:
-    st.markdown('[Buy me a coffee](https://www.buymeacoffee.com/gptlab)')
+    #st.markdown('[Buy me a coffee](https://www.buymeacoffee.com/gptlab)')
     # au.buy_me_coffee_component()
+    au.st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")
