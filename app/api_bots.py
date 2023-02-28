@@ -215,6 +215,7 @@ class bots:
 
         if user_id:
             bot_creation_metric = [('bots_created',1)]
+            user = uu.users()
             user.update_user_stats(user_id, bot_creation_metric)
 
         return bot_id 
