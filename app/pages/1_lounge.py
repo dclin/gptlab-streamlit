@@ -62,7 +62,7 @@ sb = b.get_bots(is_show_cased=True)
 
 
 st.title("Lounge")
-st.write("Hang out with AI assistants")
+st.write("Explore our Lounge and hang out with featured AI Assistants. Chat with showcased or your own assistants.")
 #st.markdown("---")
 ac.robo_avatar_component()
 st.markdown("  \n")

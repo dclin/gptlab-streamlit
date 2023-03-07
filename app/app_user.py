@@ -1,7 +1,7 @@
 import streamlit as st
 import api_users as au 
 
-legal_prompt = "If you have not done so, please review and agree to our Terms of Use and Privacy Policy, both of which are available on the Terms page. By signing in, you confirm that you have read and agreed to the Terms of Use and Privacy Policy."
+legal_prompt = "Ready to explore the endless possibilities of AI? Review and agree to our Terms of Use and Privacy Policy, available on our Terms page. By signing in, you confirm that you have read and agreed to our policies. Let's get started today!"
 user_key_prompt = "Enter your OpenAI API key to get started. Keep it safe, as it'll be your key to coming back.  \nDon't have one yet? Create one at: https://platform.openai.com/account/api-keys."
 user_key_failed = "You entered an invalid OpenAI API key."
 user_key_success = "Thanks for signing in! Make sure to keep the OpenAI API key safe, as it'll be your key to coming back. Happy building!"

@@ -219,7 +219,7 @@ def handler_bot_cancellation():
 
 def render_user_login_required():
     st.title("AI Assistant")
-    st.write("Chat with an AI Assistant")
+    st.write("Discover other Assistants in the Lounge, or locate a specific Assistant by its personalized code.")
     #st.markdown("---")
     ac.robo_avatar_component()
     st.write("\n")
@@ -229,13 +229,13 @@ def render_user_login_required():
 
 def render_bot_search():
     st.title("AI Assistant")
-    st.write("Discover other Assistants in the Lounge, or locate a specific AI Assistant by its personalized code.")
+    st.write("Discover other Assistants in the Lounge, or locate a specific Assistant by its personalized code.")
     #st.markdown("---")
     ac.robo_avatar_component()
     st.write("\n")
     search_container = st.container()
     with search_container:
-        st.text_input("Locate with a specific AI Assistant by entering its personalized code", key = "bot_search_input", on_change=handler_bot_search, args=(search_container,))
+        st.text_input("Find an AI Assistant by entering its personalized code", key = "bot_search_input", on_change=handler_bot_search, args=(search_container,))
     st.write("or")
     if st.button("Back to Lounge"):
         if "bot_info" in st.session_state:

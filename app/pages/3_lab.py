@@ -19,7 +19,7 @@ st.markdown(
 )
 
 
-factory_intro="Create your AI in three easy steps. Access it later in the Lounge or share it with friends and families!"
+factory_intro="Create your own custom AI assistant in three easy steps. Access it later in the Lounge or share it with friends and family. Unleash endless possibilities with your own AI assistant!"
 
 help_msg_coaching="Designed to provide guidance and support, the Coaching personality generates responses that are informative, motivational, and helpful."
 help_msg_creative="Ideal for chatbots that aim to inspire and encourage creativity, the Creative personality generates imaginative and thought-provoking responses."

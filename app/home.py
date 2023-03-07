@@ -15,8 +15,8 @@ import app_component as au
 
 # copies 
 home_title = "GPT Lab"
-home_introduction = "Welcome to GPT Lab, where the power of OpenAI's GPT-3 technology is at your fingertips. Socialize with pre-trained AI assistants in the Lounge or create your own custom AI companions in the Lab. Personal helper, writing partner, life coach - whatever you need, GPT Lab has you covered!"
-home_privacy = "GPT Lab is designed with your privacy in mind. Our system only identifies you by the hashed value of your OpenAI API Key, rather than any other personal identifiable information. This ensures your complete privacy and anonymity in our system. Our app uses your OpenAI API key to access AI functionality only during the duration of each visit, which is why you need to enter the same key every time you visit."
+home_introduction = "Welcome to GPT Lab, where the power of OpenAI's GPT technology is at your fingertips. Socialize with pre-trained AI Assistants in the Lounge or create your own custom AI companions in the Lab. Whether you need a personal helper, writing partner, or more, GPT Lab has you covered. Join now and start exploring the endless possibilities!"
+home_privacy = "At GPT Lab, your privacy is our top priority. To protect your personal information, our system only uses the hashed value of your OpenAI API Key, ensuring complete privacy and anonymity. Your API key is only used to access AI functionality during each visit, and is not stored beyond that time. This means you can use GPT Lab with peace of mind, knowing that your data is always safe and secure."
 
 st.markdown(
     "<style>#MainMenu{visibility:hidden;}</style>",
