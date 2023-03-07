@@ -5,6 +5,9 @@ import datetime
 import pytz 
 from cryptography.fernet import Fernet
 import base64
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
 
 
 # general helper function 
@@ -48,3 +51,45 @@ def clean_message_str(message, restart_sequence, stop_sequence):
 def clean_prompt_message_str(message):
     return message.replace("\n","\\n")
 
+
+def get_cosine_similarity(str1, str2):
+    """
+    Compute the cosine similarity between two input strings, represented as feature vectors.
+
+    The strings are first vectorized using the TfidfVectorizer class from scikit-learn,
+    which converts the text into a sparse matrix of tf-idf features, where each row corresponds to a document
+    (in this case, a single string), and each column corresponds to a unique term from the input corpus.
+    The tf-idf values for each term in each document are computed using the following formula:
+
+    tf-idf(i, j) = tf(i, j) * log(N / df(j))
+
+    where i is the index of the document, j is the index of the term, tf(i, j) is the term frequency in the document,
+    N is the total number of documents, and df(j) is the number of documents that contain the term.
+
+    The resulting feature vectors are then compared using the cosine similarity metric,
+    which measures the cosine of the angle between the vectors. A value of 1 indicates identical vectors,
+    while a value of 0 indicates completely dissimilar vectors.
+
+    Args:
+        str1 (str): The first input string to compare.
+        str2 (str): The second input string to compare.
+
+    Returns:
+        float: The cosine similarity between the two input strings, in the range [0, 1].
+    """
+
+    # Create a TfidfVectorizer object
+    corpus = [str1, str2]
+    vect = TfidfVectorizer(min_df=1,stop_words='english')
+
+    tfidf = vect.fit_transform(corpus)
+    # Compute the cosine similarity between the two vectors
+    cos_sim = cosine_similarity(tfidf[0], tfidf[1])[0][0]
+
+    return cos_sim 
+
+def datetime_serializer(obj):
+    if isinstance(obj, datetime.datetime):
+        return obj.isoformat()
+    else:
+        return str(obj)

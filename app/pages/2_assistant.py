@@ -43,11 +43,11 @@ def handler_bot_search(search_container=None, user_search_str=None):
 def handler_start_session():
     try:
         s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
-        chat_session = s.create_session(user_id=st.session_state.user['id'], bot_id=st.session_state.bot_info['id'], ai_key=st.session_state.user['api_key'])
-        st.session_state.session_id = chat_session['session_id']
+        chat_session = s.create_session(user_id=st.session_state.user['id'], bot_id=st.session_state.bot_info['id'], oai_api_key=st.session_state.user['api_key'])
+        st.session_state.session_id = chat_session['session_info']['session_id']
         # Create a session state variables to hold messages 
         st.session_state.session_msg_list = []
-        bot_message = chat_session['response_message']
+        bot_message = chat_session['session_response']['bot_message']
         st.session_state.session_msg_list.append({'is_user':False, 'message':bot_message})
     except s.OpenAIClientCredentialError as e:
         del st.session_state['user']
@@ -89,11 +89,13 @@ def handler_user_chat():
     user_message = st.session_state.user_chat_input.replace("\n","")
     st.session_state.session_msg_list.append({"message":user_message, "is_user": True})
 
+    #st.write(st.session_state)
+
     s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
     try:
-        session_response = s.get_session_response(st.session_state.session_id, st.session_state.user['api_key'], user_message=user_message)
+        session_response = s.get_session_response(session_id=st.session_state.session_id, oai_api_key=st.session_state.user['api_key'], user_message=user_message)
         if session_response:
-            st.session_state.session_msg_list.append({"message":session_response['response_message'], "is_user": False})
+            st.session_state.session_msg_list.append({"message":session_response['bot_message'], "is_user": False})
         st.session_state.user_chat_input= "" # clearing text box 
     except s.BadRequest as e:
         del st.session_state['bot_info']
@@ -147,10 +149,11 @@ def handler_user_chat():
 
 def handler_session_end():
     s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
+
     try:
-        session_response = s.get_session_response(st.session_state.session_id, st.session_state.user['api_key'], user_message=st.session_state.bot_info['summary_prompt_msg'])
+        session_response = s.get_session_response(session_id=st.session_state.session_id, oai_api_key=st.session_state.user['api_key'], user_message=st.session_state.bot_info['summary_prompt_msg'])
         if session_response:
-            st.session_state.session_msg_list.append({"message":session_response['response_message'], "is_user": False})
+            st.session_state.session_msg_list.append({"message":session_response['bot_message'], "is_user": False})
     except s.BadRequest as e:
         del st.session_state['bot_info']
         del st.session_state['session_id']

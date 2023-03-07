@@ -1,6 +1,6 @@
 import streamlit as st 
 import api_bots as ab 
-import api_util_openai as ao 
+import api_sessions as asessions 
 
 import app_user as uv 
 import app_component as au
@@ -95,7 +95,7 @@ model_params = {
 
 model_personality_list = list(model_params.keys())
 
-ai_models_list = ['text-davinci-003', 'text-curie-001', 'text-babbage-001', 'text-ada-001']
+ai_models_list = ['gpt-3.5-turbo', 'text-davinci-003', 'text-curie-001', 'text-babbage-001', 'text-ada-001']
 
 
 b = ab.bots()
@@ -338,7 +338,9 @@ def handler_lab_step_one_confirm():
     if st.session_state.lab_bot_initial_prompt != "":
         st.session_state.lab_active_step = 2
         st.session_state.lab_bot = {
+            'session_type': 'BRAIN_STORMING',
             'initial_prompt_msg': st.session_state.lab_bot_initial_prompt,
+            'summary_prompt_msg': 'Recap what we have discussed today',
             'model_config': {
                 'model': st.session_state.lab_model_name,
                 'max_tokens': st.session_state.lab_model_max_tokens,
@@ -348,48 +350,40 @@ def handler_lab_step_one_confirm():
                 'presence_penalty': st.session_state.lab_model_presence_penalty
             }
         }
-        _get_bot_response()
+
+        try:
+            s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
+            chat_session = s.create_session(user_id=st.session_state.user['id'], bot_config_dict=st.session_state.lab_bot, oai_api_key=st.session_state.user['api_key'])
+            st.session_state.lab_session_id = chat_session['session_info']['session_id']
+            # Create a session state variables to hold messages 
+            st.session_state.lab_msg_list = []
+            bot_message = chat_session['session_response']['bot_message']
+            st.session_state.lab_msg_list.append({'is_user':False, 'message':bot_message})
+        except s.OpenAIClientCredentialError as e:
+            del st.session_state['user']
+            st.session_state.user_validated = 0 
+            st.session_state.lab_active_step = 1
+            st.error("OpenAI credential error. API key may be invalid, expired, revoked, or does not have right permissions.")
+        except s.OpenAIConnectionError as e:
+            st.session_state.lab_active_step = 1
+            del st.session_state['lab_bot']
+            st.error("Could not start a session with the AI assistant. OpenAI is experiencing some technical difficulties.")
+        except s.OpenAIClientRateLimitError as e:
+            st.session_state.lab_active_step = 1
+            del st.session_state['lab_bot']
+            st.error("Could not start a session with the AI assistant. Exceeded OpenAI rate limit. Please try again later.")
+        except s.OpenAIClientConnectionError as e:
+            st.session_state.lab_active_step = 1
+            del st.session_state['lab_bot']
+            st.error("Could not start a session with the AI assistant. Could not establish connection with OpenAI. Please try again later.")
+        except (s.BadRequest, s.SessionNotRecorded, s.MessageNotRecorded, s.PromptNotRecorded, Exception) as e:
+            st.session_state.lab_active_step = 1
+            del st.session_state['lab_bot']
+            st.error("Something went wrong. Could not start a session with the AI assistant. Please try again later.")
+
     else:
         st.warning("Missing Initial Prompt")
 
-
-## Helper functions for test chat sessions 
-## TODO: eventually, should refactor the sessions data model so one can initiate a session with a "test" bot 
-def _get_bot_response():
-    restart_sequence = '|USER|'
-    stop_sequence = '|STOP|'
-    u = ao.open_ai(api_key = st.session_state['user']['api_key'], restart_sequence = '|USER|', stop_sequence = '|STOP|')
-    if 'lab_msg_prompt' not in st.session_state or st.session_state.lab_msg_prompt=="":
-        st.session_state.lab_msg_prompt = st.session_state['lab_bot']['initial_prompt_msg'] + stop_sequence 
-
-    try:
-        msg_completion = u.get_completion(model_config_dict=st.session_state['lab_bot']['model_config'], message=st.session_state.lab_msg_prompt)
-        bot_message = msg_completion['choices'][0]['text']
-        st.session_state.lab_msg_list.append({"message":bot_message, "is_user": False})
-        st.session_state.lab_session_total_token = msg_completion['usage']['total_tokens']
-
-        # prepare next prompt 
-        st.session_state.lab_msg_prompt = st.session_state.lab_msg_prompt + bot_message.replace("\n","") + u.restart_sequence 
-
-    except u.ClientConnectionError as e:
-        st.error("Cannot establish connection with OpenAI. Check your connection.")
-    except u.VendorConnectionError as e:
-        st.error("OpenAI is experiencing difficulities now. Try again later.")
-    except u.ClientCredentialError as e:
-        st.error("OpenAI key is invalid.")
-    except u.ClientRateLimitError as e:
-        st.error("OpenAI Rate Limit exceeded. Try again later")
-    except u.ClientRequestError as e:
-        st.error("Oops something went wrong. Try again later.")
-
-
-def _get_user_message():
-    restart_sequence = '|USER|'
-    stop_sequence = '|STOP|'
-    user_message = st.session_state.lab_user_chat_input
-    st.session_state.lab_msg_list.append({"message":user_message.replace("\n", "  \n"), "is_user": True})
-    st.session_state.lab_user_chat_input= "" # clearing text box 
-    st.session_state.lab_msg_prompt = st.session_state.lab_msg_prompt + user_message + stop_sequence
 
 
 def handler_lab_step_one_return():
@@ -445,8 +439,36 @@ def handler_lab_step_three_confirm():
 
 
 def handler_user_chat():
-    _get_user_message()
-    _get_bot_response()
+    user_message = st.session_state.lab_user_chat_input
+    st.session_state.lab_msg_list.append({"message":user_message.replace("\n", "  \n"), "is_user": True})
+
+    s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
+    try:
+        session_response = s.get_session_response(session_id=st.session_state.lab_session_id, oai_api_key=st.session_state.user['api_key'], user_message=user_message)
+        if session_response:
+            st.session_state.lab_msg_list.append({"message":session_response['bot_message'], "is_user": False})
+        st.session_state.lab_user_chat_input= "" # clearing text box 
+    except s.OpenAIClientCredentialError as e:
+        del st.session_state['user']
+        st.session_state.user_validated = 0 
+        st.session_state.lab_active_step = 1
+        st.error("OpenAI credential error. API key may be invalid, expired, revoked, or does not have right permissions.")
+    except s.OpenAIConnectionError as e:
+        st.session_state.lab_active_step = 1
+        del st.session_state['lab_bot']
+        st.error("Could not get AI response. OpenAI is experiencing some technical difficulties.")
+    except s.OpenAIClientRateLimitError as e:
+        st.session_state.lab_active_step = 1
+        del st.session_state['lab_bot']
+        st.error("Could not get AI response. Exceeded OpenAI rate limit. Please try again later.")
+    except s.OpenAIClientConnectionError as e:
+        st.session_state.lab_active_step = 1
+        del st.session_state['lab_bot']
+        st.error("Could not get AI response. Could not establish connection with OpenAI. Please try again later.")
+    except (s.BadRequest, s.SessionNotRecorded, s.MessageNotRecorded, s.PromptNotRecorded, Exception) as e:
+        st.session_state.lab_active_step = 1
+        del st.session_state['lab_bot']
+        st.error("Something went wrong. Could not get AI response. Please try again later.")
 
 
 button_enabled = True 
@@ -469,13 +491,6 @@ if 'lab_active_step' not in st.session_state:
 # used to store test chat session messages 
 if 'lab_msg_list' not in st.session_state:
     st.session_state.lab_msg_list = []
-
-# used to store ongoing message prompts during test chat sessions 
-if 'lab_msg_prompt' not in st.session_state:
-    st.session_state.lab_msg_prompt = ''
-
-if 'lab_session_total_token' not in st.session_state:
-    st.session_state.lab_session_total_token = 0
 
 if 'lab_bot_id' not in st.session_state:
     st.session_state.lab_bot_id = None 
