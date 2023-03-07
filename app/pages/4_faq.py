@@ -63,8 +63,8 @@ with st.expander("What contributes to an AI Assistant's personality?"):
 
 with st.expander("What language models do you support?"):
     st.markdown("""
-    We currently support the four OpenAI GPT-3 models: text-davinci-003, text-curie-001, text-babbage-001, and text-ada-001. Each model has its own strengths and weaknesses, and the choice of model should be based on your specific use case. You can find detailed information on each model on https://platform.openai.com/docs/models/gpt-3 and pricing information can be found on https://openai.com/api/pricing/.  \n
-    In general, text-davinci-003 is the most capable language model and is a good choice for a general purpose AI Assistant, while text-ada-001 is the most affordable option. text-curie-001 and text-babbage-001 offer a good balance between performance and cost.
+    We currently support the five OpenAI GPT-3 models: gpt-3.5-turbo, text-davinci-003, text-curie-001, text-babbage-001, and text-ada-001. Each model has its own strengths and weaknesses, and the choice of model should be based on your specific use case. You can find detailed information on each model on https://platform.openai.com/docs/models/gpt-3 and pricing information can be found on https://openai.com/api/pricing/.  \n
+    In general, gpt-3.5-turbo offers comparable performance as text-davinci-003 and is 10x cheaper and is a good choice for a general purpose AI Assistant, while text-ada-001 is the most affordable option. Text-davinci-003 is the most advanced model and is capable of handling a wide range of tasks including natural language understanding and generation, question answering, summarization, and translation. It's a good choice if you need a highly capable language processing system and have a larger budget. Text-curie-001 and text-babbage-001 offer a good balance between performance and cost and are ideal for specific use cases like answering questions or providing coding assistance.
     """)
 
 with st.expander("What are the four advanced parameters that can fine-tune an AI Assistant's personality?"):

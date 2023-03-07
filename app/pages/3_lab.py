@@ -29,8 +29,9 @@ help_msg_witty="Designed to generate lighthearted, humorous responses, this pers
 help_msg_personality="Personalize your AI's responses by selecting from pre-defined personalities, each with unique settings for model temperature, frequency penalty, presence penalty, and top P. Or create your own custom personality to perfectly suit your needs."
 
 help_msg_model="""
-A model in AI refers to a specific version of an AI language processing system. The four models offered in the dropdown are:  \n
-* text-davinci-003: This is the most advanced model, capable of handling a wide range of tasks and generating human-like text.  \n
+A model in AI refers to a specific version of an AI language processing system. The five models offered in the dropdown are:  \n
+* gpt-3.5-turbo: Same model as the one powering ChatGPT. Great for advanced language processing tasks and generating human-like text. \n
+* text-davinci-003: This is the most advanced model, capable of handling a wide range of tasks including natural language understanding and generation, question answering, summarization, and translation.  \n
 * text-curie-001: This model is optimized for answering questions and providing information, making it ideal for chatbots and virtual assistants.  \n
 * text-babbage-001: This model is designed for coding assistance, providing help with syntax and code completion.  \n
 * text-ada-001: This model is optimized for text generation tasks such as summarization, translation, and text completion.
