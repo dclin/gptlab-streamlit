@@ -78,7 +78,6 @@ class open_ai:
             raise
 
 
-    @st.cache_data(show_spinner=False, ttl=600)
     def validate_key(_self):
         """Main function to validate an OpenAI key, by making a free content moderation call"""
         try:
@@ -87,7 +86,7 @@ class open_ai:
         except:
             return False 
 
-    @st.cache_data(show_spinner=False, ttl=30)
+
     def get_moderation(_self, user_message):
         """Main function to get moderation on a user message"""
         get_moderation_call_string = ("""openai.Moderation.create(input="{0}")""".format(user_message))
