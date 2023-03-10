@@ -78,21 +78,21 @@ class open_ai:
             raise
 
 
-    def validate_key(_self):
+    def validate_key(self):
         """Main function to validate an OpenAI key, by making a free content moderation call"""
         try:
-            models = _self.get_moderation(user_message='Hi')
+            models = self.get_moderation(user_message='Hi')
             return True
         except:
             return False 
 
 
-    def get_moderation(_self, user_message):
+    def get_moderation(self, user_message):
         """Main function to get moderation on a user message"""
         get_moderation_call_string = ("""openai.Moderation.create(input="{0}")""".format(user_message))
 
         try:
-            moderation = _self._invoke_call(get_moderation_call_string)
+            moderation = self._invoke_call(get_moderation_call_string)
             moderation_result = moderation['results'][0]
             flagged_categories = [category for category, value in moderation_result['categories'].items() if value]
 
