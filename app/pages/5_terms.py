@@ -1,4 +1,5 @@
 import streamlit as st 
+import app_component as au
 
 st.set_page_config(
     page_title="GPT Lab - Terms",
@@ -11,10 +12,17 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.sidebar.markdown('''
-- [Terms of Use](#terms-of-use)
-- [Privacy Policy](#privacy-policy)
-''', unsafe_allow_html=True)
+with st.sidebar:
+    st.markdown('''
+    - [Terms of Use](#terms-of-use)
+    - [Privacy Policy](#privacy-policy)
+    ---
+    ''', unsafe_allow_html=True)
+
+    au.st_button(url="https://twitter.com/dclin", label="Let's connect", font_awesome_icon="fa-twitter")
+    au.st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")
+    au.st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
+
 
 st.title("Terms")
 st.write("Last updated: 2023-03-07")

@@ -16,6 +16,12 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+with st.sidebar:
+    ac.st_button(url="https://twitter.com/dclin", label="Let's connect", font_awesome_icon="fa-twitter")
+    ac.st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")
+    ac.st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
+
+
 def handler_bot_search(search_container=None, user_search_str=None):
     if user_search_str == None:
         user_search_str = st.session_state.bot_search_input
@@ -45,6 +51,7 @@ def handler_start_session():
         s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
         chat_session = s.create_session(user_id=st.session_state.user['id'], bot_id=st.session_state.bot_info['id'], oai_api_key=st.session_state.user['api_key'])
         st.session_state.session_id = chat_session['session_info']['session_id']
+        st.session_state.session_bot_id = chat_session['session_info']['session_data']['bot_id']
         # Create a session state variables to hold messages 
         st.session_state.session_msg_list = []
         bot_message = chat_session['session_response']['bot_message']
@@ -344,6 +351,14 @@ if "session_ended" not in st.session_state:
 
 if st.session_state.user_validated != 1:
     render_user_login_required()
+
+if "session_bot_id" in st.session_state and "bot_info" in st.session_state: 
+    # mix match between session bot ID and bot id 
+    # caused by user navigating to the Lounge before ending a session and choosing a different bot from the lounge 
+    if st.session_state.session_bot_id != st.session_state['bot_info']['id']: 
+        del st.session_state['session_msg_list']
+        del st.session_state['session_bot_id']
+        del st.session_state['session_id']
 
 # "bot_id" does not exist in session_state
 if st.session_state.user_validated == 1 and st.session_state.bot_validated == 0:

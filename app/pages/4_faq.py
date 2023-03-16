@@ -13,6 +13,12 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+with st.sidebar:
+    au.st_button(url="https://twitter.com/dclin", label="Let's connect", font_awesome_icon="fa-twitter")
+    au.st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")
+    au.st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
+
+
 
 st.title("FAQ")
 
@@ -94,14 +100,3 @@ with st.expander("Are there any restrictions on the type of AI Assistants that c
     """)
 with st.expander("Who owns the prompts created in GPT Lab?"):
     st.markdown("You do! The prompts created by the users in GPT Lab belong to the users themselves. GPT Lab is a platform that enables users to interact with and create their own AI Assistants powered by OpenAI's language models, and the prompts created by the users in the app are the property of the users themselves. GPT Lab does not claim any ownership or rights to the prompts created by the users.")
-
-st.write("\n")
-st.write("\n")
-st.write("\n")
-
-col1, col2 = st.columns(2)
-with col1:
-    au.st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
-
-with col2:
-    au.st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")

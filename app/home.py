@@ -1,4 +1,6 @@
 import streamlit as st 
+import app_component as ac 
+import app_utils as vutil 
 
 st.set_page_config(
     page_title="GPT Lab",
@@ -12,6 +14,10 @@ import app_component as au
 #import random as r 
 
 
+with st.sidebar:
+    ac.st_button(url="https://twitter.com/dclin", label="Let's connect", font_awesome_icon="fa-twitter")
+    ac.st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")
+    ac.st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
 
 # copies 
 home_title = "GPT Lab"
@@ -47,13 +53,12 @@ if 'user' not in st.session_state or st.session_state.user_validated != 1:
     vu.view_get_info()
 else:
     vu.view_success_confirmation()
+    st.write("\n")
+    col1, col2 = st.columns(2)
+    with col1: 
+        if st.button("Hang out with AI Assistants in the Lounge"):
+            vutil.switch_page('lounge')
+    with col2: 
+        if st.button("Create your own AI Assistants in the Lab"):
+            vutil.switch_page('lab')
 
-st.markdown("\n")
-st.markdown("\n")
-
-col1, col2 = st.columns(2)
-with col1:
-    au.st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
-
-with col2:
-    au.st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")

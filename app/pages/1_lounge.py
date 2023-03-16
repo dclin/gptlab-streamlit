@@ -16,6 +16,11 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+with st.sidebar:
+    ac.st_button(url="https://twitter.com/dclin", label="Let's connect", font_awesome_icon="fa-twitter")
+    ac.st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")
+    ac.st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
+
       
 def view_bot_grid(bot_dict, button_disabled=False, show_bot_id=False): 
 
@@ -97,3 +102,6 @@ if 'user_validated' in st.session_state and st.session_state.user_validated == 1
             clicked = col2.button("Visit the Lab")
             if clicked:
                 au.switch_page('lab')
+
+
+# st.write(st.session_state)

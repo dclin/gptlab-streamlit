@@ -18,6 +18,12 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+with st.sidebar:
+    au.st_button(url="https://twitter.com/dclin", label="Let's connect", font_awesome_icon="fa-twitter")
+    au.st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")
+    au.st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
+
+
 
 factory_intro="Create your own custom AI assistant in three easy steps. Access it later in the Lounge or share it with friends and family. Unleash endless possibilities with your own AI assistant!"
 
@@ -518,7 +524,6 @@ if st.session_state.user_validated == 1 and st.session_state.lab_active_step == 
     col1, col2 = st.columns(2)
     col1.button("Create another AI", on_click=handle_lab_restart())
     if col2.button("Back to Lounge"):
-        handle_lab_restart()
         vutil.switch_page('lounge')
 
 #st.write(st.session_state)
