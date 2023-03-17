@@ -351,6 +351,8 @@ def render_chat_session():
                 del st.session_state['bot_info']
             if "session_id" in st.session_state:
                 del st.session_state['session_id']
+            if "session_bot_id" in st.session_state:
+                del st.session_state['session_bot_id']
             st.session_state.session_ended = 0 
             st.session_state.bot_validated = 0
             if "session_msg_list" in st.session_state:
