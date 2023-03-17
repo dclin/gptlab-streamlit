@@ -224,7 +224,7 @@ def handler_bot_cancellation():
         st.experimental_set_query_params(assistant_id="")
 
 
-def handler_load_past_session(session_id):
+def handler_load_past_session(session_id,bot_id):
     s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
     st.session_state['session_msg_list'] = []
     session_messages = s.get_session_messages(session_id=session_id)
@@ -235,6 +235,7 @@ def handler_load_past_session(session_id):
             st.session_state.session_msg_list.append({'is_user':False, 'message': session_message['message']})
     st.session_state['session_id']=session_id
     st.session_state.bot_validated = 1
+    st.session_state['session_bot_id']=bot_id
 
 
 
@@ -309,7 +310,7 @@ def render_bot_details(bot):
             col1, col2, col3 = st.columns([2,1,4])
             col1.write(past_session['created_date'])
             col2.write(str(past_session['message_count']))
-            col3.button(label="Resume session", key=button_key, on_click=handler_load_past_session,args=(past_session['id'],))
+            col3.button(label="Resume session", key=button_key, on_click=handler_load_past_session,args=(past_session['id'],bot['id'],))
             #st.write(past_session['id'])
 
 def render_chat_session():
