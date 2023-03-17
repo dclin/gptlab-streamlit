@@ -248,13 +248,15 @@ class sessions:
 
         sessions = []
 
-        for s in session_docs:
-            sessions.append({
-                'id': s['id'],
-                'created_date': s['data']['created_date'],
-                'message_count': s['data']['message_count'],
-                'status': s['data']['status']
-            })
+        if session_docs:
+
+            for s in session_docs:
+                sessions.append({
+                    'id': s['id'],
+                    'created_date': s['data']['created_date'],
+                    'message_count': s['data']['message_count'],
+                    'status': s['data']['status']
+                })
         
         return sessions 
 
