@@ -36,6 +36,49 @@ class firestore_db:
                 backoff *= 2
                 tries += 1
 
+
+    def get_sub_collection_items(self, collection_name, document_id, sub_collection_name, field_names=None, order_by_field=None, order_by_direction='ASCENDING', max_tries=3, initial_backoff=1):
+        doc_ref = self.get_doc(collection_name=collection_name, document_id=document_id, return_reference_only=True, max_tries=max_tries, initial_backoff=initial_backoff)
+
+        if not doc_ref.get().exists:
+            return None
+
+        tries = 0
+        backoff = initial_backoff
+        while True:
+            try:
+                sub_collection_ref = doc_ref.collection(sub_collection_name)
+
+                if order_by_field:
+                    if order_by_direction == 'ASCENDING':
+                        sub_collection_ref = sub_collection_ref.order_by(order_by_field)
+                    elif order_by_direction == 'DESCENDING':
+                        sub_collection_ref = sub_collection_ref.order_by(order_by_field, direction=firestore.Query.DESCENDING)
+
+                sub_collection_items = []
+
+                for sub_doc_ref in sub_collection_ref.stream():
+                    sub_doc = {"id": sub_doc_ref.id}
+
+                    if not field_names or not isinstance(field_names, (list, tuple)):
+                        sub_doc["data"] = sub_doc_ref.to_dict()
+                    else:
+                        sub_doc["data"] = {}
+                        for field_name in field_names:
+                            if sub_doc_ref.get(field_name):
+                                sub_doc["data"][field_name] = sub_doc_ref.get(field_name)
+
+                    sub_collection_items.append(sub_doc)
+
+                return sub_collection_items
+            except:
+                if tries >= max_tries:
+                    return None
+                time.sleep(backoff)
+                backoff *= 2
+                tries += 1
+
+
     def get_sub_collection_item(self, collection_name, document_id, sub_collection_name, sub_document_id, field_names=None, max_tries=3, initial_backoff=1):
         doc_ref = self.get_doc(collection_name=collection_name, document_id=document_id, return_reference_only=True, max_tries=max_tries, initial_backoff=initial_backoff)
 
@@ -121,7 +164,8 @@ class firestore_db:
                                 doc_dict["data"][field_name] = doc.get(field_name)
                     docs.append(doc_dict)
                 return docs
-            except:
+            except Exception as e:
+                #print(e)
                 if tries >= max_tries:
                     return None
                 time.sleep(backoff)
@@ -219,7 +263,24 @@ class firestore_db:
 
 
 # Testing 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
+
+#     a = firestore_db() 
+#     query_filters = [("user_id","==","4QOQbDT8uUaVvYHVrWpe"),("bot_id","==","ZqNnku2ReivEDFkTS24T"),("session_schema_version","==",1)]
+
+#     sessions = a.get_docs(collection_name="sessions", query_filters=query_filters, order_by_field="created_date", order_by_direction="DESCENDING", limit=50)
+
+#     for s in sessions: 
+#         print("id: ", s['id'])
+#         print("created_date: ", s['data']['created_date'])
+#         print("message_count: ", s['data']['message_count'])
+
+
+#     messages = a.get_sub_collection_items(collection_name="sessions", document_id="r2IuPNxW7rjMfiziHCmF", sub_collection_name="messages", order_by_field="created_date", order_by_direction="DESCENDING")
+
+#     for m in messages: 
+#         print("created_date: ", m['data']['created_date'])
+#         print("role", m['data']['role'])
 
     # a = firestore_db()
     # create a doc PASS 

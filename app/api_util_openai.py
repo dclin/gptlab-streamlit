@@ -149,7 +149,7 @@ class open_ai:
         total_tokens = 0
         prompt_injection_detected = 0 
 
-        if model_config_dict['model'] == 'gpt-3.5-turbo':
+        if model_config_dict['model'] == 'gpt-3.5-turbo' or model_config_dict['model'] == 'gpt-4' :
             try:
                 response = self._get_chat_completion(model_config_dict, submit_messages)
                 bot_message = response['choices'][0]['message']['content']

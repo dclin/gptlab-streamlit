@@ -239,6 +239,47 @@ class sessions:
         if record_user_liked == None:
             pass # swallow the exception (since NBD)
 
+
+    # get a user's past sessions with a bot 
+    def get_past_sessions(self, user_id, bot_id):
+
+        query_filters = [("user_id","==",user_id),("bot_id","==",bot_id),("session_schema_version","==",1)]
+        session_docs = self.db.get_docs(collection_name="sessions", query_filters=query_filters, order_by_field="created_date", order_by_direction="DESCENDING", limit=50)
+
+        sessions = []
+
+        for s in session_docs:
+            sessions.append({
+                'id': s['id'],
+                'created_date': s['data']['created_date'],
+                'message_count': s['data']['message_count'],
+                'status': s['data']['status']
+            })
+        
+        return sessions 
+
+    # get a user's messages from a session 
+    def get_session_messages(self, session_id):
+
+        message_docs = self.db.get_sub_collection_items(
+            collection_name="sessions", 
+            document_id=session_id, 
+            sub_collection_name="messages", 
+            order_by_field="created_date", 
+            order_by_direction="ASCENDING")
+
+        messages = []
+
+        for m in message_docs: 
+            messages.append({
+                'role':m['data']['role'],
+                'created_date':m['data']['created_date'],
+                'message':gu.decrypt_user_message(user_hash=self.user_hash, cipher_text=m['data']['message'])
+            })
+
+        return messages 
+
+
     # internal function to just create a session 
     def _create_session(self, user_id, bot_id=None, bot_config_dict=None):
         bot = bu.bots()
@@ -349,6 +390,39 @@ class sessions:
 
 
 #### TESTING #### 
+
+# user_id = "4QOQbDT8uUaVvYHVrWpe"
+# bot_id = "ZqNnku2ReivEDFkTS24T"
+# user_hash = 'bbb064748055bb3850e35007ffa616ce4c354952458359ae79e01189f7b94418'
+
+# s = sessions(user_hash=user_hash)
+
+# sessions = s.get_past_sessions(user_id=user_id, bot_id=bot_id)
+
+# for session in sessions:
+#     print(session)
+
+
+# messages = s.get_session_messages(session_id="r2IuPNxW7rjMfiziHCmF")
+
+# for message in messages:
+#     print(message)
+
+#     query_filters = [("user_id","==","4QOQbDT8uUaVvYHVrWpe"),("bot_id","==","ZqNnku2ReivEDFkTS24T"),("session_schema_version","==",1)]
+
+#     sessions = a.get_docs(collection_name="sessions", query_filters=query_filters, order_by_field="created_date", order_by_direction="DESCENDING", limit=50)
+
+#     for s in sessions: 
+#         print("id: ", s['id'])
+#         print("created_date: ", s['data']['created_date'])
+#         print("message_count: ", s['data']['message_count'])
+
+
+#     messages = a.get_sub_collection_items(collection_name="sessions", document_id="r2IuPNxW7rjMfiziHCmF", sub_collection_name="messages", order_by_field="created_date", order_by_direction="DESCENDING")
+
+
+
+
 # user_id = ''
 # user_hash = ''
 # bot_id = ''

@@ -4,6 +4,7 @@ import app_utils as vutil
 import app_component as ac 
 import api_bots as abots 
 import api_sessions as asessions 
+import api_util_general as ag 
 
 st.set_page_config(
     page_title="GPT Lab - Assistant",
@@ -223,6 +224,19 @@ def handler_bot_cancellation():
         st.experimental_set_query_params(assistant_id="")
 
 
+def handler_load_past_session(session_id):
+    s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
+    st.session_state['session_msg_list'] = []
+    session_messages = s.get_session_messages(session_id=session_id)
+    for session_message in session_messages:
+        if session_message['role'] == 'user':
+            st.session_state.session_msg_list.append({'is_user':True,'message':session_message['message']})
+        else:
+            st.session_state.session_msg_list.append({'is_user':False, 'message': session_message['message']})
+    st.session_state['session_id']=session_id
+    st.session_state.bot_validated = 1
+
+
 
 def render_user_login_required():
     st.title("AI Assistant")
@@ -270,9 +284,33 @@ def render_bot_details(bot):
     st.write("\n")
 
     col1, col2 = st.columns(2)
-    col1.button("Start Session with {0}".format(bot['name']), key = "bot_confirm", on_click=handler_start_session)
+    col1.button("Start a new session with {0}".format(bot['name']), key = "bot_confirm", on_click=handler_start_session)
     col2.button("Find another AI assistant", key = "bot_cancel", on_click=handler_bot_cancellation)
 
+
+    s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
+    past_sessions = []
+    sessions = s.get_past_sessions(user_id=st.session_state['user']['id'], bot_id=st.session_state['bot_info']['id'])
+
+    if len(sessions)>0:
+        for session in sessions: 
+            # ignoring anything that has less than 2 messages since those are likely abandoned errors 
+            if session['message_count'] > 2:
+                past_sessions.append({'id':session['id'], 'message_count':session['message_count'], 'created_date':ag.format_datetime(session['created_date'])})               
+    
+    if len(past_sessions) > 0:
+        st.write("\n")
+        st.write("Or revisit a past session")
+        col1, col2, col3 = st.columns([2,1,4])
+        col1.write("Session time")
+        col2.write("Messages")
+        for past_session in past_sessions: 
+            button_key="session_{0}".format(past_session["id"])
+            col1, col2, col3 = st.columns([2,1,4])
+            col1.write(past_session['created_date'])
+            col2.write(str(past_session['message_count']))
+            col3.button(label="Resume session", key=button_key, on_click=handler_load_past_session,args=(past_session['id'],))
+            #st.write(past_session['id'])
 
 def render_chat_session():
     title_str = "{0}: AI {1}".format(st.session_state.bot_info['name'],st.session_state.bot_info['tag_line'])

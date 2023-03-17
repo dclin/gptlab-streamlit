@@ -42,6 +42,13 @@ def decrypt_user_message(user_hash, cipher_text):
 def get_current_time():
     return datetime.datetime.now(pytz.timezone('US/Pacific'))
 
+
+def format_datetime(dt):
+    # Format the datetime object
+    formatted_dt = dt.strftime('%Y-%m-%d %H:%M %Z')
+    return formatted_dt
+
+
 def clean_display_message_str(message, restart_sequence, stop_sequence):
     return message.replace(restart_sequence,"").replace(stop_sequence,"").replace("\n","  \n").replace("\\n","  \n")
 
