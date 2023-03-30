@@ -15,14 +15,6 @@ def buy_me_coffee_component():
 #@st.cache(show_spinner=False, suppress_st_warning=True,ttl=600)
 def robo_avatar_component():
 
-    robo_css = """<style>
-      @media (max-width: 800px) {
-        div {
-          flex-wrap: wrap;
-        }
-      }
-    </style>"""
-
     robo_html = "<div style='display: flex; flex-wrap: wrap; justify-content: left;'>"
     robo_avatar_seed = [0, 'aRoN', 'gptLAb', 180, 'nORa', 'dAVe', 'Julia', 'WEldO', 60]
 

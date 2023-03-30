@@ -47,7 +47,7 @@ help_msg_max_token = "OpenAI sets a limit on the number of tokens, or individual
 #help_msg_session_type = "The type of conversation the AI will support. In Question and Answer, the user asks the AI a question and receives a single response. Brainstorming and coaching are back-and-forth conversations with the AI. In brainstorming sessions, the AI retains a rolling conversation, meaning that only the most recent exchanges are displayed and older exchanges are gradually forgotten. In coaching sessions, the AI retains the context of the conversation."
 help_msg_session_type = "The type of back-and-forth conversation the AI will support. In brainstorming sessions, the AI retains a rolling conversation, meaning that only the most recent exchanges are displayed and older exchanges are gradually forgotten. In coaching sessions, the AI retains the context of the conversation."
 help_msg_initial_prompt = "The initial prompt is the most crucial part of the AI configuration, as it sets the context for the conversation and guides the AI's responses. It is the hidden set of instructions for the AI. The initial prompt should clearly convey the topic or task that you would like the AI to focus on during the conversation."
-help_msg_summary_prompt = "Prompt to help the AI summarize the session"
+help_msg_summary_prompt = "The summary prompt is used to generate a session summary at the end of each chat session. Additionally, coaching assistants also periodically utilize the summary prompt to condense chat sessions in order to keep them under the maximum model token limit."
 help_msg_description = "Description shows up in the lounge"
 help_msg_tag_line = "Tag line shows in chat sessions"
 help_msg_model_temperature = "Controls how creativity in AI's response"
@@ -172,7 +172,7 @@ def render_lab_step_one():
     if personality == "Custom":
         expand_model_params = True 
 
-    if st.session_state.lab_bot_initial_prompt != "":
+    if st.session_state.lab_bot_initial_prompt.strip() != "":
         advance_disabled = False 
 
 
@@ -260,6 +260,9 @@ def render_message(is_user, message):
 
 
 def render_lab_step_three():
+
+    bot_creation_disallowed = True
+
     st.title("Lab")
     st.markdown(factory_intro)
     #st.markdown("---")
@@ -282,14 +285,14 @@ def render_lab_step_three():
     bot_tagline = '[Tag Line]'
     bot_description = '[Description]'
 
-    if 'lab_bot_name' in st.session_state and st.session_state.lab_bot_name != "": 
+    if 'lab_bot_name' in st.session_state and st.session_state.lab_bot_name.strip() != "": 
         bot_avatar_url = "https://api.dicebear.com/5.x/bottts-neutral/svg?seed={0}&radius=25".format(st.session_state.lab_bot_name) 
         bot_name = st.session_state.lab_bot_name
 
-    if 'lab_bot_tagline' in st.session_state and st.session_state.lab_bot_tagline != "":
+    if 'lab_bot_tagline' in st.session_state and st.session_state.lab_bot_tagline.strip() != "":
         bot_tagline = st.session_state.lab_bot_tagline
 
-    if 'lab_bot_description' in st.session_state and st.session_state.lab_bot_description != "":
+    if 'lab_bot_description' in st.session_state and st.session_state.lab_bot_description.strip() != "":
         bot_description = st.session_state.lab_bot_description        
 
     st.write("\n")
@@ -318,9 +321,15 @@ def render_lab_step_three():
     st.markdown("\n")
     st.markdown("\n")
 
+    if 'lab_bot_name' in st.session_state and st.session_state.lab_bot_name.strip() != "" \
+        and 'lab_bot_tagline' in st.session_state and st.session_state.lab_bot_tagline.strip() != "" \
+        and 'lab_bot_description' in st.session_state and st.session_state.lab_bot_description.strip() != "" \
+        and 'lab_prompt_summary' in st.session_state and st.session_state.lab_prompt_summary.strip() != "":
+        bot_creation_disallowed = False 
+
     col1, col2 = st.columns(2)
     col1.button("Back to Step 1", key='lab_bot_cancel', on_click=handler_lab_step_one_return)
-    col2.button("Looks good. Create {0}!".format(bot_name), key='lab_bot_creation_confirm', on_click=handler_lab_step_three_confirm)
+    col2.button("Looks good. Create {0}!".format(bot_name), key='lab_bot_creation_confirm', on_click=handler_lab_step_three_confirm, disabled=bot_creation_disallowed)
 
 
 
