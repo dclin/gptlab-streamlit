@@ -57,12 +57,12 @@ def handler_start_session():
         st.session_state.session_msg_list = []
         bot_message = chat_session['session_response']['bot_message']
         st.session_state.session_msg_list.append({'is_user':False, 'message':bot_message})
-    except s.OpenAIClientCredentialError as e:
+    except s.OpenAIError as e:
         del st.session_state['user']
         st.session_state.user_validated = 0 
         del st.session_state['bot_info']
         st.session_state.bot_validated = 0 
-        st.error("Your API credential is no longer valid.")
+        st.error(f"{e}")
     except s.BadRequest as e:
         del st.session_state['bot_info']
         st.session_state.bot_validated = 0 
@@ -71,18 +71,6 @@ def handler_start_session():
         del st.session_state['bot_info']
         st.session_state.bot_validated = 0 
         st.error("Could not start a session with the AI assistant. Please try again later.")
-    except s.OpenAIConnectionError as e:
-        del st.session_state['bot_info']
-        st.session_state.bot_validated = 0 
-        st.error("Could not start a session with the AI assistant. OpenAI is experiencing some technical difficulties.")
-    except s.OpenAIClientRateLimitError as e:
-        del st.session_state['bot_info']
-        st.session_state.bot_validated = 0 
-        st.error("Could not start a session with the AI assistant. Exceeded OpenAI rate limit. Please try again later.")
-    except s.OpenAIClientConnectionError as e:
-        del st.session_state['bot_info']
-        st.session_state.bot_validated = 0 
-        st.error("Could not start a session with the AI assistant. Could not establish connection with OpenAI. Please try again later.")
     except s.PromptNotRecorded as e:
         del st.session_state['bot_info']
         st.session_state.bot_validated = 0 
@@ -111,26 +99,14 @@ def handler_user_chat():
         st.session_state.bot_validated = 0
         del st.session_state['session_msg_list']
         st.error("Could not get AI response. Try again later.")
-    except s.OpenAIClientCredentialError as e:
+    except s.OpenAIError as e:
         del st.session_state['user']
         st.session_state.user_validated = 0 
         del st.session_state['bot_info']
         del st.session_state['session_id']
         st.session_state.bot_validated = 0
         del st.session_state['session_msg_list']
-        st.error("Your API credential is no longer valid.")
-    except s.OpenAIConnectionError as e:
-        del st.session_state['bot_info']
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
-        st.error("Could not get AI response. Could not establish connection with OpenAI. Try again later.")
-    except s.OpenAIClientRateLimitError as e:
-        del st.session_state['bot_info']
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
-        st.error("Could not get AI response. Exceeded OpenAI rate limit. Try again later.")
+        st.error(f"{e}")
     except s.SessionAttributeNotUpdated as e:
         del st.session_state['session_id']
         st.session_state.bot_validated = 0
@@ -168,26 +144,14 @@ def handler_session_end():
         st.session_state.bot_validated = 0
         del st.session_state['session_msg_list']
         st.error("Could not get AI response. Try again later.")
-    except s.OpenAIClientCredentialError as e:
+    except s.OpenAIError as e: 
         del st.session_state['user']
         st.session_state.user_validated = 0 
         del st.session_state['bot_info']
         del st.session_state['session_id']
         st.session_state.bot_validated = 0
         del st.session_state['session_msg_list']
-        st.error("Your API credential is no longer valid.")
-    except s.OpenAIConnectionError as e:
-        del st.session_state['bot_info']
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
-        st.error("Could not get AI response. Could not establish connection with OpenAI. Try again later.")
-    except s.OpenAIClientRateLimitError as e:
-        del st.session_state['bot_info']
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
-        st.error("Could not get AI response. Exceeded OpenAI rate limit. Try again later.")
+        st.error(f"{e}")
     except s.SessionAttributeNotUpdated as e:
         del st.session_state['session_id']
         st.session_state.bot_validated = 0

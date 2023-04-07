@@ -375,23 +375,11 @@ def handler_lab_step_one_confirm():
             st.session_state.lab_msg_list = []
             bot_message = chat_session['session_response']['bot_message']
             st.session_state.lab_msg_list.append({'is_user':False, 'message':bot_message})
-        except s.OpenAIClientCredentialError as e:
+        except s.OpenAIError as e: 
             del st.session_state['user']
             st.session_state.user_validated = 0 
             st.session_state.lab_active_step = 1
-            st.error("OpenAI credential error. API key may be invalid, expired, revoked, or does not have right permissions.")
-        except s.OpenAIConnectionError as e:
-            st.session_state.lab_active_step = 1
-            del st.session_state['lab_bot']
-            st.error("Could not start a session with the AI assistant. OpenAI is experiencing some technical difficulties.")
-        except s.OpenAIClientRateLimitError as e:
-            st.session_state.lab_active_step = 1
-            del st.session_state['lab_bot']
-            st.error("Could not start a session with the AI assistant. Exceeded OpenAI rate limit. Please try again later.")
-        except s.OpenAIClientConnectionError as e:
-            st.session_state.lab_active_step = 1
-            del st.session_state['lab_bot']
-            st.error("Could not start a session with the AI assistant. Could not establish connection with OpenAI. Please try again later.")
+            st.error(f"{e}")
         except (s.BadRequest, s.SessionNotRecorded, s.MessageNotRecorded, s.PromptNotRecorded, Exception) as e:
             st.session_state.lab_active_step = 1
             del st.session_state['lab_bot']
@@ -464,23 +452,10 @@ def handler_user_chat():
         if session_response:
             st.session_state.lab_msg_list.append({"message":session_response['bot_message'], "is_user": False})
         st.session_state.lab_user_chat_input= "" # clearing text box 
-    except s.OpenAIClientCredentialError as e:
-        del st.session_state['user']
-        st.session_state.user_validated = 0 
-        st.session_state.lab_active_step = 1
-        st.error("OpenAI credential error. API key may be invalid, expired, revoked, or does not have right permissions.")
-    except s.OpenAIConnectionError as e:
+    except s.OpenAIError as e: 
         st.session_state.lab_active_step = 1
         del st.session_state['lab_bot']
-        st.error("Could not get AI response. OpenAI is experiencing some technical difficulties.")
-    except s.OpenAIClientRateLimitError as e:
-        st.session_state.lab_active_step = 1
-        del st.session_state['lab_bot']
-        st.error("Could not get AI response. Exceeded OpenAI rate limit. Please try again later.")
-    except s.OpenAIClientConnectionError as e:
-        st.session_state.lab_active_step = 1
-        del st.session_state['lab_bot']
-        st.error("Could not get AI response. Could not establish connection with OpenAI. Please try again later.")
+        st.error(f"{e}")
     except (s.BadRequest, s.SessionNotRecorded, s.MessageNotRecorded, s.PromptNotRecorded, Exception) as e:
         st.session_state.lab_active_step = 1
         del st.session_state['lab_bot']

@@ -1,7 +1,7 @@
 import api_util_firebase as fu 
 import api_util_general as gu 
 import api_util_openai as ou
-#import streamlit as st 
+import streamlit as st 
 
 class users:
 
@@ -14,7 +14,7 @@ class users:
     class BadRequest(Exception):
         pass
 
-    class OpenAIClientCredentialError(Exception):
+    class OpenAIError(Exception):
         pass
 
     class DBError(Exception):
@@ -112,10 +112,11 @@ class users:
 
 
     def get_create_user(self, api_key):
-        o = ou.open_ai(api_key=api_key, restart_sequence='|USER|', stop_sequence='|SP|')
-        key_validated = o.validate_key()
-        if key_validated == False:
-            raise self.OpenAIClientCredentialError("Bad request: OPENAI API Key Invalid")
+        try:
+            o = ou.open_ai(api_key=api_key, restart_sequence='|USER|', stop_sequence='|SP|')
+            o.validate_key()
+        except Exception as e: 
+            raise self.OpenAIError(f"{str(e)}") from e 
 
         user_hash = gu.hash_user_string(api_key)
 

@@ -5,6 +5,7 @@ legal_prompt = "Ready to explore the endless possibilities of AI? Review and agr
 user_key_prompt = "Enter your OpenAI API key to get started. Keep it safe, as it'll be your key to coming back.  \nDon't have one yet? Create one at: https://platform.openai.com/account/api-keys."
 user_key_failed = "You entered an invalid OpenAI API key."
 user_key_success = "Thanks for signing in! Make sure to keep the OpenAI API key safe, as it'll be your key to coming back. Happy building!"
+api_key_placeholder = "Paste your OpenAI API key here (sk-...)"
 
 
 class app_user:
@@ -26,7 +27,7 @@ class app_user:
             st.markdown(legal_prompt)
             st.markdown("\n")
             st.info(user_key_prompt)
-            st.text_input("Enter your OpenAI API Key", key="user_key_input",on_change=self._validate_user_info, type="password", autocomplete="current-password")
+            st.text_input("Enter your OpenAI API Key", key="user_key_input",on_change=self._validate_user_info, type="password", autocomplete="current-password", placeholder=api_key_placeholder)
 
     def _validate_user_info(self):
         u = au.users()
@@ -35,9 +36,9 @@ class app_user:
             user = u.get_create_user(api_key=st.session_state.user_key_input)           
             self._set_info(user_id=user['id'], api_key = st.session_state.user_key_input, user_hash=user['data']['user_hash'])
             st.session_state.user_validated = 1 
-        except u.OpenAIClientCredentialError as e:
+        except u.OpenAIError as e: 
             with self.container:
-                st.error(user_key_failed)
+                st.error(f"{str(e)}")
         except u.DBError as e:
             with self.container:
                 st.warning("Something went wrong. Please try again.")      

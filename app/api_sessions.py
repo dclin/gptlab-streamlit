@@ -28,19 +28,9 @@ class sessions:
 
     class DBAttributeError(Exception):
         pass
-    
-    class OpenAIClientConnectionError(Exception):
-        pass
-    
-    class OpenAIConnectionError(Exception):
-        pass
 
-    class OpenAIClientCredentialError(Exception):
+    class OpenAIError(Exception): 
         pass 
-
-    class OpenAIClientRateLimitError(Exception):
-        pass
-
 
     class SessionStatus(enum.Enum):
         STARTED = 0
@@ -140,21 +130,9 @@ class sessions:
             try: 
                 content_moderation_check = o.get_moderation(user_message=user_message)
                 current_session_messages.append({'role':'user','message':user_message,'created_date':gu.get_current_time()})
-            except o.ClientConnectionError as e:
+            except o.OpenAIError as e: 
                 self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
-                raise self.OpenAIClientConnectionError("Cannot establish connection with OpenAI. Check your connection.")
-            except o.VendorConnectionError as e:
-                self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
-                raise self.OpenAIConnectionError("OpenAI is experiencing difficulities now. Try again later.")
-            except o.ClientCredentialError as e:
-                self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
-                raise self.OpenAIClientCredentialError("OpenAI credential error. API key may be invalid, expired, revoked, or does not have right permissions.")
-            except o.ClientRateLimitError as e:
-                self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
-                raise self.OpenAIClientRateLimitError("OpenAI Rate Limit exceeded. Try again later.")
-            except o.ClientRequestError as e:
-                self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
-                raise self.BadRequest("Bad Request: Bad OpenAI Request")
+                raise self.OpenAIError(f"{str(e)}") from e 
 
         try:
             responded_messages = o.get_ai_response(
@@ -164,21 +142,9 @@ class sessions:
                 summary_prompt_msg=current_session['data']['bot_summary_prompt_msg'],
                 session_type=current_session['data']['bot_session_type']
             )
-        except o.ClientConnectionError as e:
+        except o.OpenAIError as e: 
             self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
-            raise self.OpenAIClientConnectionError("Cannot establish connection with OpenAI. Check your connection.")
-        except o.VendorConnectionError as e:
-            self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
-            raise self.OpenAIConnectionError("OpenAI is experiencing difficulities now. Try again later.")
-        except o.ClientCredentialError as e:
-            self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
-            raise self.OpenAIClientCredentialError("OpenAI credential error. API key may be invalid, expired, revoked, or does not have right permissions.")
-        except o.ClientRateLimitError as e:
-            self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
-            raise self.OpenAIClientRateLimitError("OpenAI Rate Limit exceeded. Try again later.")
-        except o.ClientRequestError as e:
-            self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
-            raise self.BadRequest("Bad Request: Bad OpenAI Request")
+            raise self.OpenAIError(f"{str(e)}") from e 
 
         try:
             self._update_session_messages(session_id, responded_messages)

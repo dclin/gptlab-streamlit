@@ -5,20 +5,8 @@ import api_util_general as gu
 
 class open_ai:
 
-    class ClientConnectionError(Exception):
-        pass
-    
-    class VendorConnectionError(Exception):
-        pass
-
-    class ClientCredentialError(Exception):
+    class OpenAIError(Exception):
         pass 
-
-    class ClientRateLimitError(Exception):
-        pass
-
-    class ClientRequestError(Exception):
-        pass
 
 
     def __init__(self, api_key, restart_sequence, stop_sequence):
@@ -32,23 +20,10 @@ class open_ai:
         """Generic function to invoke openai calls"""
         try:
             result = eval(f"{call_string}")
-            return result      
+            return result     
 
-        except (openai.error.Timeout, openai.error.APIConnectionError) as e:
-            raise self.ClientConnectionError("OpenAI connection timed out or errored. Retry later.")
-
-        except (openai.error.APIError, openai.error.ServiceUnavailableError) as e:
-            raise self.VendorConnectionError("OpenAI issue. Retry later.")
-
-        except (openai.error.PermissionError, openai.error.AuthenticationError) as e:
-            raise self.ClientCredentialError("OpenAI credential error. API key may be invalid, expired, revoked, or does not have right permissions.")
-
-        except openai.error.RateLimitError as e:
-            raise self.ClientRateLimitError("Rate Limit reached. Retry later")
-
-        except openai.error.InvalidRequestError as e:
-            raise self.ClientRequestError("Bad requests.")
-
+        except Exception as e: 
+            raise self.OpenAIError(f"OpenAI: {str(e)}") from e 
 
     def get_ai_response(self, session_type, model_config_dict, init_prompt_msg, summary_prompt_msg, messages):
         """Main function to get an AI chat response. It also condenses the message chain accordingly"""
@@ -83,8 +58,8 @@ class open_ai:
         try:
             models = self.get_moderation(user_message='Hi')
             return True
-        except:
-            return False 
+        except Exception as e:
+            raise
 
 
     def get_moderation(self, user_message):
