@@ -114,7 +114,8 @@ class users:
     def get_create_user(self, api_key):
         try:
             o = ou.open_ai(api_key=api_key, restart_sequence='|USER|', stop_sequence='|SP|')
-            o.validate_key()
+            validation_info = o.validate_key()
+            supported_models_list = validation_info['supported_models_list']
         except Exception as e: 
             raise self.OpenAIError(f"{str(e)}") from e 
 
@@ -132,11 +133,16 @@ class users:
             user_id = self.create_user(user_hash=user_hash)
             # get user details 
             user = self.get_user(user_id=user_id) 
-            return user 
+
         except self.BadRequest:
             # since user exists, just get user details 
             user = self.get_users(user_hash=user_hash)
             
             if len(user) > 1:
                 raise self.BadRequest("Bad request: more than one user with API key")
-            return user[0] 
+            user =  user[0] 
+        
+        # Add the supported models list to the user object
+        user['data']['supported_models_list'] = supported_models_list
+
+        return user

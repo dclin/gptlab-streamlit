@@ -1,6 +1,7 @@
 import openai 
 import streamlit as st 
 import api_util_general as gu 
+import time 
 
 
 class open_ai:
@@ -16,14 +17,29 @@ class open_ai:
         self.restart_sequence = restart_sequence
 
 
-    def _invoke_call(self, call_string):
+    def _invoke_call(self, call_string, max_tries=3, initial_backoff=1):
         """Generic function to invoke openai calls"""
-        try:
-            result = eval(f"{call_string}")
-            return result     
+        RETRY_EXCEPTIONS = (
+            openai.error.APIError, 
+            openai.error.Timeout, 
+            openai.error.APIConnectionError, 
+            openai.error.ServiceUnavailableError
+        )
+        tries = 0
+        backoff = initial_backoff
 
-        except Exception as e: 
-            raise self.OpenAIError(f"OpenAI: {str(e)}") from e 
+        while True: 
+            try:
+                result = eval(f"{call_string}")
+                return result     
+
+            except Exception as e:
+                if isinstance(e, RETRY_EXCEPTIONS) and tries < max_tries:
+                    time.sleep(backoff)
+                    backoff *= 2
+                    tries +=1
+                else:
+                    raise self.OpenAIError(f"OpenAI: {str(e)}") from e 
 
     def get_ai_response(self, session_type, model_config_dict, init_prompt_msg, summary_prompt_msg, messages):
         """Main function to get an AI chat response. It also condenses the message chain accordingly"""
@@ -56,8 +72,12 @@ class open_ai:
     def validate_key(self):
         """Main function to validate an OpenAI key, by making a free content moderation call"""
         try:
-            models = self.get_moderation(user_message='Hi')
-            return True
+            models = self._get_models()
+            models_list = [model.id for model in models['data']]
+            gpt_lab_models_list = ['gpt-4-32k','gpt-4','gpt-3.5-turbo', 'text-davinci-003', 'text-curie-001', 'text-babbage-001', 'text-ada-001']
+            key_supported_models_list = [model for model in gpt_lab_models_list if model in models_list] 
+            #print(key_supported_models_list)
+            return {'validated': True, 'supported_models_list': key_supported_models_list}
         except Exception as e:
             raise
 
@@ -96,11 +116,13 @@ class open_ai:
     def _condense_coaching_session(self, total_token_count, messages, model_config_dict, init_prompt_msg, summary_prompt_msg):
         
         messages_condensed = 0 
-        model_token_max = 2048
-        if model_config_dict['model'] == 'gpt-3.5-turbo':
+        model_token_max = 2049
+        if model_config_dict['model'] == 'gpt-4-32k':
+            model_token_max = 32768
+        elif model_config_dict['model'] == 'gpt-4':
+            model_token_max = 8192
+        elif model_config_dict['model'] in ('gpt-3.5-turbo', 'text-davinci-003'):
             model_token_max = 4096
-        elif model_config_dict['model'] == 'text-davinci-003':
-            model_token_max = 4000
                 
         if total_token_count >= 0.6 * model_token_max:
             summary_messages = messages + [{'role':'user', 'message':summary_prompt_msg, 'current_date':gu.get_current_time()}]
@@ -124,7 +146,7 @@ class open_ai:
         total_tokens = 0
         prompt_injection_detected = 0 
 
-        if model_config_dict['model'] == 'gpt-3.5-turbo' or model_config_dict['model'] == 'gpt-4' :
+        if model_config_dict['model'] in ('gpt-3.5-turbo', 'gpt-4', 'gpt-4-32k'):
             try:
                 response = self._get_chat_completion(model_config_dict, submit_messages)
                 bot_message = response['choices'][0]['message']['content']
@@ -157,16 +179,16 @@ class open_ai:
         if model_config_validated:
             get_completion_call_string = (
             """openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages={0},
-                temperature={1},
-                max_tokens={2},
-                top_p={3},
-                frequency_penalty={4},
-                presence_penalty={5},
-                stop=['{6}']
+                model="{0}",
+                messages={1},
+                temperature={2},
+                max_tokens={3},
+                top_p={4},
+                frequency_penalty={5},
+                presence_penalty={6},
+                stop=['{7}']
                 )""").format(
-                    #model_config_dict['model'],
+                    model_config_dict['model'],
                     oai_messages,
                     model_config_dict['temperature'],
                     model_config_dict['max_tokens'],

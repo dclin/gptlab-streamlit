@@ -11,7 +11,7 @@ api_key_placeholder = "Paste your OpenAI API key here (sk-...)"
 class app_user:
     def __init__(self):
         if 'user' not in st.session_state:
-            st.session_state.user = {'id':None, 'api_key':None}
+            st.session_state.user = {'id':None, 'api_key':None, 'user_hash': None, 'key_supported_models_list':[]}
         if 'user_validated' not in st.session_state:
             st.session_state.user_validated = None 
         self.container = st.container()
@@ -19,8 +19,8 @@ class app_user:
     def _get_info(self):
         return st.session_state.user 
 
-    def _set_info(self, user_id, api_key, user_hash):
-        st.session_state.user = {'id': user_id, 'api_key': api_key, 'user_hash' : user_hash}
+    def _set_info(self, user_id, api_key, user_hash, key_supported_models_list):
+        st.session_state.user = {'id': user_id, 'api_key': api_key, 'user_hash' : user_hash, 'key_supported_models_list': key_supported_models_list}
 
     def view_get_info(self):
         with self.container:
@@ -34,7 +34,7 @@ class app_user:
 
         try:
             user = u.get_create_user(api_key=st.session_state.user_key_input)           
-            self._set_info(user_id=user['id'], api_key = st.session_state.user_key_input, user_hash=user['data']['user_hash'])
+            self._set_info(user_id=user['id'], api_key = st.session_state.user_key_input, user_hash=user['data']['user_hash'], key_supported_models_list=user['data']['supported_models_list'])
             st.session_state.user_validated = 1 
         except u.OpenAIError as e: 
             with self.container:

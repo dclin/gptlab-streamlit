@@ -49,6 +49,11 @@ def handler_bot_search(search_container=None, user_search_str=None):
 
 def handler_start_session():
     try:
+        # Check if user has access to the model in bot_info's model_config
+        if st.session_state.bot_info['model_config']['model'] not in st.session_state.user['key_supported_models_list']:
+            # Swap the model with the first model in the user's key_supported_models_list
+            st.session_state.bot_info['model_config']['model'] = st.session_state.user['key_supported_models_list'][0]
+
         s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
         chat_session = s.create_session(user_id=st.session_state.user['id'], bot_id=st.session_state.bot_info['id'], oai_api_key=st.session_state.user['api_key'])
         st.session_state.session_id = chat_session['session_info']['session_id']
@@ -390,4 +395,4 @@ if st.session_state.user_validated == 1 and st.session_state.bot_validated == 1 
 if st.session_state.user_validated == 1 and st.session_state.bot_validated == 1 and "session_id" in st.session_state:
     render_chat_session()
 
-#st.write(st.session_state)
+# st.write(st.session_state)

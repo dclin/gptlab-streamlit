@@ -488,6 +488,8 @@ if 'lab_bot_id' not in st.session_state:
 
 
 if st.session_state.user_validated == 1 and st.session_state.lab_active_step == 1:
+    # overwrite the model list based on models that user's API key has access to 
+    ai_models_list = st.session_state.user['key_supported_models_list']
     render_lab_step_one()
 
 if st.session_state.user_validated == 1 and st.session_state.lab_active_step == 2:
@@ -510,4 +512,4 @@ if st.session_state.user_validated == 1 and st.session_state.lab_active_step == 
     if col2.button("Back to Lounge"):
         vutil.switch_page('lounge')
 
-#st.write(st.session_state)
+# st.write(st.session_state)
