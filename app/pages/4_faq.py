@@ -4,7 +4,7 @@ import app_component as au
 st.set_page_config(
     page_title="GPT Lab - FAQ",
     page_icon="https://api.dicebear.com/5.x/bottts-neutral/svg?seed=gptLAb"#,
-    #menu_items={"About": "GPT Lab is a user-friendly app that allows anyone to interact with and create their own AI Assistants powered by OpenAI's GPT-3 language model. Our goal is to make AI accessible and easy to use for everyone, so you can focus on designing your Assistant without worrying about the underlying infrastructure.", "Get help": None, "Report a Bug": None}
+    #menu_items={"About": "GPT Lab is a user-friendly app that allows anyone to interact with and create their own AI Assistants powered by OpenAI's GPT language model. Our goal is to make AI accessible and easy to use for everyone, so you can focus on designing your Assistant without worrying about the underlying infrastructure.", "Get help": None, "Report a Bug": None}
 )
 
 
@@ -27,14 +27,14 @@ au.robo_avatar_component()
 
 st.markdown("#### General")
 with st.expander("What is GPT Lab?", expanded=False):
-    st.markdown("GPT Lab is a user-friendly app that allows anyone to interact with and create their own AI Assistants powered by OpenAI's GPT-3 language model. With GPT Lab, you can interact with pre-built AI Assistants or create your own by specifying a prompt and OpenAI model parameters. Our goal is to make AI accessible and easy to use for everyone, so you can focus on designing your Assistant without worrying about the underlying infrastructure.")
+    st.markdown("GPT Lab is a user-friendly app that allows anyone to interact with and create their own AI Assistants powered by OpenAI's GPT language model. With GPT Lab, you can interact with pre-built AI Assistants or create your own by specifying a prompt and OpenAI model parameters. Our goal is to make AI accessible and easy to use for everyone, so you can focus on designing your Assistant without worrying about the underlying infrastructure.")
 
 
 with st.expander("Why use GPT Lab instead of Chat GPT?"):
     st.markdown("GPT Lab aims to be the \"GitLab\" for your favorite prompts, allowing you to save and reuse your favorite prompts as AI Assistants. This eliminates the need to retype the same prompt every time you want to use it. Additionally, you can share your AI Assistants with others without revealing your exact prompt. Since you're using your own OpenAI API key, you don't have to worry about Chat GPT being at capacity.")
 
 with st.expander("What is an OpenAI API Key and why do I need one?"):
-    st.markdown("An OpenAI API key is a unique credential that allows you to interact with OpeAI's GPT-3 models. It also serves as your identifier in GPT Lab, allowing us to remember the AI Assistants you have created.")
+    st.markdown("An OpenAI API key is a unique credential that allows you to interact with OpeAI's GPT models. It also serves as your identifier in GPT Lab, allowing us to remember the AI Assistants you have created.")
 
 with st.expander("How can I get an OpenAI API Key?"):
     st.markdown("You can obtain an OpenAI API Key by creating one on the OpenAI website: https://platform.openai.com/account/api-keys")
@@ -43,7 +43,7 @@ with st.expander("Why do I need to enter my OpenAI API key each time I use the a
     st.markdown("For security reasons, your actual OpenAI Key is not stored on our servers. Our application only uses it during the duration of your sessions to interact with OpenAI. To keep track of your information, we use a secure one-way hashing algorithm to store a hashed version of your OpenAI API Key, which becomes your unique identifier in our backend data store. This helps ensure the confidentiality and security of your information.")
 
 with st.expander("Does GPT Lab cost money?"):
-    st.markdown("Currently, GPT Lab itself is free to use. However, you will incur costs for interacting with the OpenAI GPT-3 models, as each API call to the model will be charged. The cost per call is relatively low, and under normal usage, the cost should be minimal. You have full control over the usage and cost of the model, as you are using your own API key. You can monitor your usage and costs through the OpenAI dashboard and adjust your usage accordingly to stay within your budget. The backend infrastructure costs are currently covered by us, and any donation through the \"Buy Me a Coffee\" link is greatly appreciated!")
+    st.markdown("Currently, GPT Lab itself is free to use. However, you will incur costs for interacting with the OpenAI GPT models, as each API call to the model will be charged. The cost per call is relatively low, and under normal usage, the cost should be minimal. You have full control over the usage and cost of the model, as you are using your own API key. You can monitor your usage and costs through the OpenAI dashboard and adjust your usage accordingly to stay within your budget. The backend infrastructure costs are currently covered by us, and any donation through the \"Buy Me a Coffee\" link is greatly appreciated!")
 
 st.markdown("#### AI Assistant Design")
 
@@ -69,8 +69,8 @@ with st.expander("What contributes to an AI Assistant's personality?"):
 
 with st.expander("What language models do you support?"):
     st.markdown("""
-    We currently support the five OpenAI GPT-3 models: gpt-3.5-turbo, text-davinci-003, text-curie-001, text-babbage-001, and text-ada-001. Each model has its own strengths and weaknesses, and the choice of model should be based on your specific use case. You can find detailed information on each model on https://platform.openai.com/docs/models/gpt-3 and pricing information can be found on https://openai.com/api/pricing/.  \n
-    In general, gpt-3.5-turbo offers comparable performance as text-davinci-003 and is 10x cheaper and is a good choice for a general purpose AI Assistant, while text-ada-001 is the most affordable option. Text-davinci-003 is the most advanced model and is capable of handling a wide range of tasks including natural language understanding and generation, question answering, summarization, and translation. It's a good choice if you need a highly capable language processing system and have a larger budget. Text-curie-001 and text-babbage-001 offer a good balance between performance and cost and are ideal for specific use cases like answering questions or providing coding assistance.
+    We currently support the following OpenAI GPT models: gpt-3.5-turbo, text-davinci-003, text-curie-001, text-babbage-001, and text-ada-001. In addition, we also support gpt-4 and gpt-4-32k (if you have access to them). Each model has its own strengths and weaknesses, and the choice of model should be based on your specific use case. You can find detailed information on each model on https://platform.openai.com/docs/models and pricing information can be found on https://openai.com/api/pricing/.  \n
+    In general, gpt-3.5-turbo is a good choice for a general-purpose AI Assistant due to its performance, which is comparable to text-davinci-003, and its cost, which is 10x cheaper than text-davinci-003. Gpt-4 and gpt-4-32k are the newest and most advanced text-based models; however, they are the priciest and are currently in a limited beta, accessible only to those who have been granted access. Text-davinci-003 is capable of handling a wide range of tasks, including natural language understanding and generation, question answering, summarization, and translation, making it a good choice if you need a highly capable language processing system and have a larger budget. Text-curie-001 and text-babbage-001 offer a good balance between performance and cost, and are ideal for specific use cases like answering questions or providing coding assistance.
     """)
 
 with st.expander("What are the four advanced parameters that can fine-tune an AI Assistant's personality?"):

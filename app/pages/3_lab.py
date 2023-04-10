@@ -35,8 +35,9 @@ help_msg_witty="Designed to generate lighthearted, humorous responses, this pers
 help_msg_personality="Personalize your AI's responses by selecting from pre-defined personalities, each with unique settings for model temperature, frequency penalty, presence penalty, and top P. Or create your own custom personality to perfectly suit your needs."
 
 help_msg_model="""
-A model in AI refers to a specific version of an AI language processing system. The five models offered in the dropdown are:  \n
-* gpt-3.5-turbo: Same model as the one powering ChatGPT. Great for advanced language processing tasks and generating human-like text. \n
+A model in AI refers to a specific version of an AI language processing system. The models offered in the dropdown are:  \n
+* gpt-4-32k and gpt-4 (if you have access to them): Newest and most advanced text-based models from OpenAI, offering state-of-the-art performance in natural language understanding, generation, and a wide range of other language processing tasks. GPT-4-32k offers the same capabilities as GPT-4 but with 4x the context length. Note that GPT-4 is currently in a limited beta and only accessible to those who have been granted.  \n
+* gpt-3.5-turbo: Same model as the default ChatGPT model. Great for advanced language processing tasks and generating human-like text. \n
 * text-davinci-003: This is the most advanced model, capable of handling a wide range of tasks including natural language understanding and generation, question answering, summarization, and translation.  \n
 * text-curie-001: This model is optimized for answering questions and providing information, making it ideal for chatbots and virtual assistants.  \n
 * text-babbage-001: This model is designed for coding assistance, providing help with syntax and code completion.  \n
@@ -134,7 +135,7 @@ def render_lab_step_one():
         st.text_area(label="Initial Prompt", key="lab_bot_initial_prompt", value=st.session_state.lab_bot['initial_prompt_msg'], max_chars=2000, height=250,disabled=button_enabled)
     st.write("\n")
     st.markdown("##### AI Personality")
-    st.markdown("Fine-tuning the GPT-3 model to give your AI its unique personality.")
+    st.markdown("Fine-tuning the GPT model to give your AI its unique personality.")
 
     if 'lab_bot' in st.session_state:
         restart_disabled=False
