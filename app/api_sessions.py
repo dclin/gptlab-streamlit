@@ -36,6 +36,7 @@ class sessions:
         COMPLETED = 1
         USER_ABANDONED = 2
         SYSTEM_ABANDONED = 3
+        SYSTEM_ABANDONED_OPENAI = 4
 
     class UserLiked(enum.Enum):
         DISLIKED = 0
@@ -130,8 +131,8 @@ class sessions:
                 content_moderation_check = o.get_moderation(user_message=user_message)
                 current_session_messages.append({'role':'user','message':user_message,'created_date':gu.get_current_time()})
             except o.OpenAIError as e: 
-                gu.logging.warning(f"Session {session_id} status SYSTEM_ABANDONED | OpenAIError | Exception: {e}")
-                self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
+                gu.logging.warning(f"Session {session_id} status SYSTEM_ABANDONED_OPENAI | OpenAIError | Exception: {e}")
+                self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED_OPENAI.value)
                 raise self.OpenAIError(f"{str(e)}") from e 
 
         try:
@@ -143,8 +144,8 @@ class sessions:
                 session_type=current_session['data']['bot_session_type']
             )
         except o.OpenAIError as e: 
-            gu.logging.warning(f"Session {session_id} status SYSTEM_ABANDONED | OpenAIError | Exception: {e}")
-            self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
+            gu.logging.warning(f"Session {session_id} status SYSTEM_ABANDONED_OPENAI | OpenAIError | Exception: {e}")
+            self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED_OPENAI.value)
             raise self.OpenAIError(f"{str(e)}") from e 
 
         try:
