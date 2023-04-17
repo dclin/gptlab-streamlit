@@ -1,6 +1,7 @@
 import streamlit as st 
 import app_component as ac 
 import app_utils as vutil 
+import api_util_general as gu 
 
 st.set_page_config(
     page_title="GPT Lab",
@@ -10,9 +11,8 @@ st.set_page_config(
 
 
 import app_user as uv 
-import app_component as au
+import logging 
 #import random as r 
-
 
 with st.sidebar:
     ac.st_button(url="https://twitter.com/dclin", label="Let's connect", font_awesome_icon="fa-twitter")
@@ -40,7 +40,7 @@ st.markdown("#### Greetings")
 st.write(home_introduction)
 
 #st.markdown("---")
-au.robo_avatar_component()
+ac.robo_avatar_component()
 
 st.markdown("#### Privacy")
 st.write(home_privacy)
