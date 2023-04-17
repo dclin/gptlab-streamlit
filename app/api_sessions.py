@@ -130,7 +130,7 @@ class sessions:
                 content_moderation_check = o.get_moderation(user_message=user_message)
                 current_session_messages.append({'role':'user','message':user_message,'created_date':gu.get_current_time()})
             except o.OpenAIError as e: 
-                gu.logging.debug(f"Session {session_id} status SYSTEM_ABANDONED | OpenAIError | Exception: {e}")
+                gu.logging.warning(f"Session {session_id} status SYSTEM_ABANDONED | OpenAIError | Exception: {e}")
                 self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
                 raise self.OpenAIError(f"{str(e)}") from e 
 
@@ -143,7 +143,7 @@ class sessions:
                 session_type=current_session['data']['bot_session_type']
             )
         except o.OpenAIError as e: 
-            gu.logging.debug(f"Session {session_id} status SYSTEM_ABANDONED | OpenAIError | Exception: {e}")
+            gu.logging.warning(f"Session {session_id} status SYSTEM_ABANDONED | OpenAIError | Exception: {e}")
             self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
             raise self.OpenAIError(f"{str(e)}") from e 
 
@@ -176,7 +176,7 @@ class sessions:
         record_status = self.db.update_document_fields(collection_name="sessions", document_id=session_id, updates=status_update)
 
         if record_status == None:
-            gu.logging.debug(f"Session {session_id} status SYSTEM_ABANDONED | SessionAttributeNotUpdated | Exception: Session status {end_status} not set accordingly")
+            gu.logging.warning(f"Session {session_id} status SYSTEM_ABANDONED | SessionAttributeNotUpdated | Exception: Session status {end_status} not set accordingly")
             self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
             raise self.SessionAttributeNotUpdated("Session status not changed accordingly")
 
