@@ -1,4 +1,8 @@
 import streamlit as st 
+import app_utils as vutil 
+import app_component as ac 
+import app_user as uv 
+
 
 st.set_page_config(
     page_title="GPT Lab",
@@ -6,10 +10,6 @@ st.set_page_config(
     #menu_items={"About": "GPT Lab is a user-friendly app that allows anyone to interact with and create their own AI Assistants powered by OpenAI's GPT-3 language model. Our goal is to make AI accessible and easy to use for everyone, so you can focus on designing your Assistant without worrying about the underlying infrastructure.", "Get help": None, "Report a Bug": None}
 )
 
-import app_utils as vutil 
-import app_component as ac 
-import app_user as uv 
-#import random as r 
 
 with st.sidebar:
     ac.st_button(url="https://twitter.com/dclin", label="Let's connect", font_awesome_icon="fa-twitter")
