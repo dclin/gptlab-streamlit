@@ -278,7 +278,7 @@ def render_bot_details(bot):
         options=(
             st.session_state.user['key_supported_models_list']),
             key='lab_model_name', 
-            help="Default GPT model. Select a different one to overwrite the default GPT model.",
+            help="The assistant's default GPT model is currently selected. You may overwrite the model by selecting a different one.",
             index=st.session_state.user['key_supported_models_list'].index(st.session_state.bot_info['model_config']['model']),
     )
 
