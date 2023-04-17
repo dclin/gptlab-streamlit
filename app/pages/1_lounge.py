@@ -64,6 +64,7 @@ def view_bot_grid(bot_dict, button_disabled=False, show_bot_id=False):
 
 b = ab.bots()
 sb = b.get_bots(is_show_cased=True)
+r.shuffle(sb)
 
 
 st.title("Lounge")
@@ -91,6 +92,7 @@ if 'user_validated' in st.session_state and st.session_state.user_validated == 1
         view_bot_grid(bot_dict=sb, button_disabled=button_enabled)
     with my_bots:
         if len(mb) > 0:
+            r.shuffle(mb)
             st.markdown("\n")
             st.markdown("##### Chat with your AI assistants!")
             view_bot_grid(bot_dict=mb, button_disabled=button_enabled, show_bot_id=True)
