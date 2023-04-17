@@ -2,7 +2,6 @@ import api_util_firebase as fu
 import api_util_general as gu 
 import api_util_openai as ou
 import api_bots as bu 
-import api_users as uu
 import enum 
 import json 
 
@@ -49,7 +48,7 @@ class sessions:
         self.openai_restart_sequence = '|USER|'
         self.user_hash = user_hash
 
-    def create_session(self, user_id, oai_api_key, bot_id=None, bot_config_dict=None):
+    def create_session(self, user_id, oai_api_key, bot_id=None, bot_config_dict=None, overwritten_model=None):
         """
         Creates a new chat session for a user_id, using a specific OpenAI API Key. 
         The session can associated with a specific bot id or just a bot config (during the lab).
@@ -58,7 +57,7 @@ class sessions:
 
         try: 
             if bot_id != None:
-                new_session = self._create_session(user_id=user_id, bot_id=bot_id)
+                new_session = self._create_session(user_id=user_id, bot_id=bot_id, overwritten_model=overwritten_model)
             if bot_config_dict != None: 
                 new_session = self._create_session(user_id=user_id, bot_config_dict=bot_config_dict)
             if bot_id == None and bot_config_dict == None: 
@@ -131,6 +130,7 @@ class sessions:
                 content_moderation_check = o.get_moderation(user_message=user_message)
                 current_session_messages.append({'role':'user','message':user_message,'created_date':gu.get_current_time()})
             except o.OpenAIError as e: 
+                gu.logging.debug(f"Session {session_id} status SYSTEM_ABANDONED | OpenAIError | Exception: {e}")
                 self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
                 raise self.OpenAIError(f"{str(e)}") from e 
 
@@ -143,6 +143,7 @@ class sessions:
                 session_type=current_session['data']['bot_session_type']
             )
         except o.OpenAIError as e: 
+            gu.logging.debug(f"Session {session_id} status SYSTEM_ABANDONED | OpenAIError | Exception: {e}")
             self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
             raise self.OpenAIError(f"{str(e)}") from e 
 
@@ -175,6 +176,7 @@ class sessions:
         record_status = self.db.update_document_fields(collection_name="sessions", document_id=session_id, updates=status_update)
 
         if record_status == None:
+            gu.logging.debug(f"Session {session_id} status SYSTEM_ABANDONED | SessionAttributeNotUpdated | Exception: Session status {end_status} not set accordingly")
             self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED.value)
             raise self.SessionAttributeNotUpdated("Session status not changed accordingly")
 
@@ -221,7 +223,8 @@ class sessions:
                     'id': s['id'],
                     'created_date': s['data']['created_date'],
                     'message_count': s['data']['message_count'],
-                    'status': s['data']['status']
+                    'status': s['data']['status'],
+                    'bot_model': s['data']['bot_model_config']['model']
                 })
         
         return sessions 
@@ -249,13 +252,15 @@ class sessions:
 
 
     # internal function to just create a session 
-    def _create_session(self, user_id, bot_id=None, bot_config_dict=None):
+    def _create_session(self, user_id, bot_id=None, bot_config_dict=None, overwritten_model=None):
         bot = bu.bots()
 
         if bot_id != None:
             # for now, skipping making sure user exists 
             try:
                 bot_dict = bot.get_bot(bot_id)
+                if overwritten_model != None: 
+                    bot_dict['model_config']['model'] = overwritten_model
             except bot.BotNotFound as e:
                 raise self.BadRequest("Bad Request: Assistant not found")
             except bot.BotIncomplete as e:

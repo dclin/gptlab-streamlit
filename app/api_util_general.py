@@ -7,8 +7,11 @@ from cryptography.fernet import Fernet
 import base64
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import logging 
 
 
+# basic logging configuration 
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
 
 # general helper function 
 def generate_uuid():

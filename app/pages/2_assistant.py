@@ -17,12 +17,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-with st.sidebar:
-    ac.st_button(url="https://twitter.com/dclin", label="Let's connect", font_awesome_icon="fa-twitter")
-    ac.st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")
-    ac.st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
-
-
 def handler_bot_search(search_container=None, user_search_str=None):
     if user_search_str == None:
         user_search_str = st.session_state.bot_search_input
@@ -53,9 +47,21 @@ def handler_start_session():
         if st.session_state.bot_info['model_config']['model'] not in st.session_state.user['key_supported_models_list']:
             # Swap the model with the first model in the user's key_supported_models_list
             st.session_state.bot_info['model_config']['model'] = st.session_state.user['key_supported_models_list'][0]
+            st.session_state.bot_info['model_overwritten'] = True 
 
         s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
-        chat_session = s.create_session(user_id=st.session_state.user['id'], bot_id=st.session_state.bot_info['id'], oai_api_key=st.session_state.user['api_key'])
+
+        new_model = None 
+
+        if 'model_overwritten' in st.session_state.bot_info and st.session_state.bot_info['model_overwritten']:
+            new_model = st.session_state.bot_info['model_config']['model']
+            
+        chat_session = s.create_session(
+            user_id=st.session_state.user['id'], 
+            bot_id=st.session_state.bot_info['id'], 
+            oai_api_key=st.session_state.user['api_key'],
+            overwritten_model = new_model
+        )
         st.session_state.session_id = chat_session['session_info']['session_id']
         st.session_state.session_bot_id = chat_session['session_info']['session_data']['bot_id']
         # Create a session state variables to hold messages 
@@ -102,7 +108,8 @@ def handler_user_chat():
         del st.session_state['bot_info']
         del st.session_state['session_id']
         st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
         st.error("Could not get AI response. Try again later.")
     except s.OpenAIError as e:
         del st.session_state['user']
@@ -110,27 +117,32 @@ def handler_user_chat():
         del st.session_state['bot_info']
         del st.session_state['session_id']
         st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
         st.error(f"{e}")
     except s.SessionAttributeNotUpdated as e:
         del st.session_state['session_id']
         st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
         st.error("Could not get AI response. Try again later.")
     except s.PromptNotRecorded as e:
         del st.session_state['session_id']
         st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
         st.error("Could not get AI response. Try again later.")
     except s.MessageNotRecorded as e: 
         del st.session_state['session_id']
         st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
         st.error("Could not get AI response. Try again later.")
     except Exception as e: 
         del st.session_state['session_id']
         st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
         st.error("Unknown error. Try again later.")
 
 
@@ -147,7 +159,8 @@ def handler_session_end():
         del st.session_state['bot_info']
         del st.session_state['session_id']
         st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
         st.error("Could not get AI response. Try again later.")
     except s.OpenAIError as e: 
         del st.session_state['user']
@@ -155,27 +168,32 @@ def handler_session_end():
         del st.session_state['bot_info']
         del st.session_state['session_id']
         st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
         st.error(f"{e}")
     except s.SessionAttributeNotUpdated as e:
         del st.session_state['session_id']
         st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
         st.error("Could not get AI response. Try again later.")
     except s.PromptNotRecorded as e:
         del st.session_state['session_id']
         st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
         st.error("Could not get AI response. Try again later.")
     except s.MessageNotRecorded as e: 
         del st.session_state['session_id']
         st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
         st.error("Could not get AI response. Try again later.")
     except Exception as e: 
         del st.session_state['session_id']
         st.session_state.bot_validated = 0
-        del st.session_state['session_msg_list']
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
         st.error("Unknown error. Try again later.")
     st.session_state.session_ended = 1 
     st.session_state.user_chat_input= "" # clearing text box 
@@ -250,7 +268,27 @@ def render_bot_details(bot):
     button_key="Bot_Details_{0}".format(bot["id"])
     col1, col2 = st.columns([1, 5])
     col1.image(avatar_url, width=50)
+    if st.session_state.bot_info['model_config']['model'] not in st.session_state.user['key_supported_models_list']:
+        # Swap the model with the first model in the user's key_supported_models_list
+        st.session_state.bot_info['model_config']['model'] = st.session_state.user['key_supported_models_list'][0]
+        st.session_state.bot_info['model_overwritten'] = True 
+    
+    model_overwrite = col2.selectbox(
+        label="GPT Model", 
+        options=(
+            st.session_state.user['key_supported_models_list']),
+            key='lab_model_name', 
+            help="Default GPT model. Select a different one to overwrite the default GPT model.",
+            index=st.session_state.user['key_supported_models_list'].index(st.session_state.bot_info['model_config']['model']),
+    )
+
+    if model_overwrite != st.session_state.bot_info['model_config']['model']:
+        st.session_state.bot_info['model_config']['model'] = model_overwrite
+        st.session_state.bot_info['model_overwritten'] = True 
+
+    col2.write("Assistant Description:")
     col2.write(bot['description'])
+
     st.write("\n")
 
     col1, col2 = st.columns(2)
@@ -266,45 +304,52 @@ def render_bot_details(bot):
         for session in sessions: 
             # ignoring anything that has less than 2 messages since those are likely abandoned errors 
             if session['message_count'] > 2:
-                past_sessions.append({'id':session['id'], 'message_count':session['message_count'], 'created_date':ag.format_datetime(session['created_date'])})               
+                past_sessions.append({
+                    'id':session['id'], 
+                    'message_count':session['message_count'], 
+                    'created_date':ag.format_datetime(session['created_date']),
+                    'model': session['bot_model']
+                    })               
     
     if len(past_sessions) > 0:
         st.write("\n")
         st.write("Or revisit a past session")
-        col1, col2, col3 = st.columns([2,1,4])
+        col1, col2, col3, col4 = st.columns([2,2,1,4])
         col1.write("Session time")
-        col2.write("Messages")
+        col2.write("GPT Model")
+        col3.write("Messages")
         for past_session in past_sessions: 
             button_key="session_{0}".format(past_session["id"])
-            col1, col2, col3 = st.columns([2,1,4])
+            col1, col2, col3, col4 = st.columns([2,2,1,4])
             col1.write(past_session['created_date'])
-            col2.write(str(past_session['message_count']))
-            col3.button(label="Resume session", key=button_key, on_click=handler_load_past_session,args=(past_session['id'],bot['id'],))
+            col2.write(str(past_session['model']))            
+            col3.write(str(past_session['message_count']))
+            col4.button(label="Resume session", key=button_key, on_click=handler_load_past_session,args=(past_session['id'],bot['id'],))
             #st.write(past_session['id'])
+    
+    # st.write(st.session_state)
 
 def render_chat_session():
     title_str = "{0}: AI {1}".format(st.session_state.bot_info['name'],st.session_state.bot_info['tag_line'])
     st.title(title_str)
 
     if st.session_state.session_ended == 0:
-        # input box 
-        with st.container():
-            col1, col2 = st.columns([4, 1])
 
-            with col1:
-                st.text_input(
-                    "Talk to {0}".format(st.session_state.bot_info['name']), 
-                    key = "user_chat_input",
-                    on_change=handler_user_chat
-                )
+        if len(st.session_state.session_msg_list) > 5:
 
-            with col2:
-                st.text("")
-                st.text("")
-                st.button("End Session",
+            with st.sidebar:
+                st.write("")
+                st.button(f"End Session with {st.session_state.bot_info['name']}",
                 key = "end_session",
                 on_click=handler_session_end 
                 )
+
+        # input box 
+        st.text_input(
+            "Talk to {0}".format(st.session_state.bot_info['name']), 
+            key = "user_chat_input",
+            on_change=handler_user_chat
+        )
             
         st.markdown("""___""")
         # Chat module 
@@ -347,7 +392,6 @@ def render_message(is_user, bot_name, message):
     st.write("\n")
 
 
-
 ## STATE MANAGEMENT
 
 if "user_validated" not in st.session_state:
@@ -366,7 +410,8 @@ if "session_bot_id" in st.session_state and "bot_info" in st.session_state:
     # mix match between session bot ID and bot id 
     # caused by user navigating to the Lounge before ending a session and choosing a different bot from the lounge 
     if st.session_state.session_bot_id != st.session_state['bot_info']['id']: 
-        del st.session_state['session_msg_list']
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
         del st.session_state['session_bot_id']
         del st.session_state['session_id']
 
@@ -394,5 +439,11 @@ if st.session_state.user_validated == 1 and st.session_state.bot_validated == 1 
 
 if st.session_state.user_validated == 1 and st.session_state.bot_validated == 1 and "session_id" in st.session_state:
     render_chat_session()
+
+with st.sidebar:
+    ac.st_button(url="https://twitter.com/dclin", label="Let's connect", font_awesome_icon="fa-twitter")
+    ac.st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")
+    ac.st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
+
 
 # st.write(st.session_state)
