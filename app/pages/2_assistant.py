@@ -5,6 +5,9 @@ import app_component as ac
 import api_bots as abots 
 import api_sessions as asessions 
 import api_util_general as ag 
+import csv 
+import io 
+import base64 
 
 st.set_page_config(
     page_title="GPT Lab - Assistant",
@@ -202,6 +205,15 @@ def handler_session_end():
     except Exception as e:
         pass # purposely swallow all sort of exceptions. no point trouble users
 
+def handle_session_rating(liked):
+
+    s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
+    user_liked = s.UserLiked.LIKED.value 
+    if liked == False:
+        user_liked = s.UserLiked.DISLIKED.value
+    s.rate_session(session_id=st.session_state.session_id, user_liked=user_liked)
+    st.info("Thank you for rating your session!")
+
 
 def handler_bot_cancellation():
     st.session_state.bot_validated = 0 
@@ -224,6 +236,20 @@ def handler_load_past_session(session_id,bot_id):
     st.session_state.bot_validated = 1
     st.session_state['session_bot_id']=bot_id
 
+
+def handler_generate_chat_csv():
+    chat_message = st.session_state.session_msg_list
+
+    # convert the list of dictionarie
+    csv_buffer = io.StringIO()
+    csv_writer = csv.writer(csv_buffer)
+
+    csv_writer.writerow(["is_user","message"])
+
+    for message in chat_message:
+        csv_writer.writerow([message['is_user'], message["message"]])
+    
+    return csv_buffer.getvalue()    
 
 
 def render_user_login_required():
@@ -339,9 +365,10 @@ def render_chat_session():
 
             with st.sidebar:
                 st.write("")
-                st.button(f"End Session with {st.session_state.bot_info['name']}",
+                st.button(f"Conclude chat with {st.session_state.bot_info['name']}",
                 key = "end_session",
-                on_click=handler_session_end 
+                on_click=handler_session_end,
+                help=f"After concluding your chat with {st.session_state.bot_info['name']}, you will be able to view a recap of your session, download a transcript of your chat, and rate your session."
                 )
 
         # input box 
@@ -356,11 +383,31 @@ def render_chat_session():
         for i in range(len(st.session_state.session_msg_list)-1,-1,-1): # chat in st.session_state.session_msg_list:
             render_message(st.session_state.session_msg_list[i]['is_user'], st.session_state.bot_info['name'], st.session_state.session_msg_list[i]['message'])
     
+    # st.write(st.session_state)
+
     if st.session_state.session_ended == 1: 
         st.write("Session Recap")
         message = st.session_state.session_msg_list[-1]['message']
+
         st.markdown(message.replace("\n","  \n"))
-        if st.button("Return to lounge"):
+
+
+        st.divider()
+
+        with st.container():
+            col1, col2, col3, col4 = st.columns([3,1,1,2]) 
+            col1.write(f"Did you enjoy your session with {st.session_state.bot_info['name']}?")
+            col2.button("👍", use_container_width=True, on_click=handle_session_rating, args=(True,))
+            col3.button("👎", use_container_width=True, on_click=handle_session_rating, args=(False,))
+
+
+        st.write("")
+        csv_data = handler_generate_chat_csv()
+        col1, col2, col3 = st.columns(3)
+
+        col1.download_button("Download chat session", data=csv_data, file_name="chat_session.csv", mime="text/csv")
+
+        if col2.button("Return to lounge"):
             if "bot_info" in st.session_state:
                 del st.session_state['bot_info']
             if "session_id" in st.session_state:
@@ -372,6 +419,9 @@ def render_chat_session():
             if "session_msg_list" in st.session_state:
                 del st.session_state['session_msg_list']
             vutil.switch_page('lounge')
+
+        
+
 
 
 def render_message(is_user, bot_name, message):

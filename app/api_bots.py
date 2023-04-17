@@ -53,7 +53,8 @@ class bots:
                 'id': bot['id'],
                 'name': bot['data']['name'],
                 'tag_line': bot['data']['tag_line'],
-                'description': bot['data']['description']
+                'description': bot['data']['description'],
+                'sessions_started': bot['data'].get('sessions_started',0)
             })
         
         return bots 

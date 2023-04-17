@@ -39,6 +39,8 @@ def view_bot_grid(bot_dict, button_disabled=False, show_bot_id=False):
                 else:
                     colb.markdown(f"{bot_dict[i]['name']} - {bot_dict[i]['tag_line']}  \nAssistant ID: {bot_dict[i]['id']}")
             col1.write(bot_dict[i]['description'])
+            if 'user_validated' in st.session_state and st.session_state.user_validated == 1:
+                col1.write(f"Session{'s' if bot_dict[i]['sessions_started'] > 1 else ''}: {bot_dict[i]['sessions_started']}")
             if col1.button(button_label, key=button_key, disabled=button_disabled):
                 st.session_state.bot_info=bot_dict[i]
                 st.session_state.bot_validated = 1           
@@ -53,6 +55,8 @@ def view_bot_grid(bot_dict, button_disabled=False, show_bot_id=False):
                 else:
                     col2b.markdown(f"{bot_dict[i]['name']} - {bot_dict[i]['tag_line']}  \nAssistant ID: {bot_dict[i]['id']}")
             col2.write(bot_dict[i]['description'])
+            if 'user_validated' in st.session_state and st.session_state.user_validated == 1:
+                col2.write(f"Session{'s' if bot_dict[i]['sessions_started'] > 1 else ''}: {bot_dict[i]['sessions_started']}")
             if col2.button(button_label, key=button_key, disabled=button_disabled):
                 st.session_state.bot_info=bot_dict[i]
                 st.session_state.bot_validated = 1           
