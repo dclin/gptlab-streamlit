@@ -39,6 +39,9 @@ with st.expander("What is an OpenAI API Key and why do I need one?"):
 with st.expander("How can I get an OpenAI API Key?"):
     st.markdown("You can obtain an OpenAI API Key by creating one on the OpenAI website: https://platform.openai.com/account/api-keys")
 
+with st.expander("Why am I getting a 'You exceeded your current quota, please check your plan and billing details.' error?"):
+    st.markdown("This error typically indicates you have hit your maximum monthly spend (hard limit) for the API. However, you will likely see this error if you have a free trial API key. For optimal chatting experience, we recommend upgrading to a pay-as-you-go API key by entering your billing information [here](https://platform.openai.com/account/billing/overview). You can learn more about OpenAI API rate limits [here](https://platform.openai.com/docs/guides/rate-limits/overview).")
+
 with st.expander("Why do I need to enter my OpenAI API key each time I use the app?"):
     st.markdown("For security reasons, your actual OpenAI Key is not stored on our servers. Our application only uses it during the duration of your sessions to interact with OpenAI. To keep track of your information, we use a secure one-way hashing algorithm to store a hashed version of your OpenAI API Key, which becomes your unique identifier in our backend data store. This helps ensure the confidentiality and security of your information.")
 
