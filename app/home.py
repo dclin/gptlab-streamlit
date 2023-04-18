@@ -29,7 +29,7 @@ st.markdown(
 #st.title(home_title)
 st.markdown(f"""# {home_title} <span style=color:#2E9BF5><font size=5>Beta</font></span>""",unsafe_allow_html=True)
 
-st.info("On Tuesday (**April 18th**) and Thursday (**April 20th**), from 8:00 a.m. to 12:00 p.m. GMT, our hosting provider, Streamlit Community Cloud, will have maintenance windows to upgrade their services. Please be advised that GPT Lab may experience intermittent interruptions lasting no more than an hour at a time during these maintenance periods. We apologize for any inconvenience this may cause and appreciate your patience during these maintenance periods.")
+st.info("On Thursday (**April 20th**), from 8:00 a.m. to 12:00 p.m. GMT, our hosting provider, Streamlit Community Cloud, will have maintenance windows to upgrade their services. Please be advised that GPT Lab may experience intermittent interruptions lasting no more than an hour at a time during these maintenance periods. We apologize for any inconvenience this may cause and appreciate your patience during these maintenance periods.")
 
 st.markdown("""\n""")
 st.markdown("""\n""")
