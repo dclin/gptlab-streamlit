@@ -377,8 +377,6 @@ def handler_lab_step_one_confirm():
             bot_message = chat_session['session_response']['bot_message']
             st.session_state.lab_msg_list.append({'is_user':False, 'message':bot_message})
         except s.OpenAIError as e: 
-            del st.session_state['user']
-            st.session_state.user_validated = 0 
             st.session_state.lab_active_step = 1
             st.error(f"{e}")
         except (s.BadRequest, s.SessionNotRecorded, s.MessageNotRecorded, s.PromptNotRecorded, Exception) as e:

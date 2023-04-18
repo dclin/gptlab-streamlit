@@ -7,12 +7,10 @@ import api_sessions as asessions
 import api_util_general as ag 
 import csv 
 import io 
-import base64 
 
 st.set_page_config(
     page_title="GPT Lab - Assistant",
-    page_icon="https://api.dicebear.com/5.x/bottts-neutral/svg?seed=gptLAb"#,
-    #menu_items={"About": "GPT Lab is a user-friendly app that allows anyone to interact with and create their own AI Assistants powered by OpenAI's GPT-3 language model. Our goal is to make AI accessible and easy to use for everyone, so you can focus on designing your Assistant without worrying about the underlying infrastructure.", "Get help": None, "Report a Bug": None}
+    page_icon="https://api.dicebear.com/5.x/bottts-neutral/svg?seed=gptLAb"
 )
 
 st.markdown(
@@ -33,18 +31,19 @@ def handler_bot_search(search_container=None, user_search_str=None):
         if search_container:
             with search_container: 
                 st.error("AI assistant could not be found")
-        # else:
-        #     st.error("AI assistant could not be found")
         return False 
     except b.BotIncomplete as e:
         if search_container:
             with search_container:
                 st.error("AI assistant could not be selected, as it was not configured properly.")
-        # else:
-        #     st.error("AI assistant could not be selected, as it was not configured properly.")
         return False 
 
 def handler_start_session():
+
+    def _cleanup_handler_start_session_exception():
+        del st.session_state['bot_info']
+        st.session_state.bot_validated = 0 
+
     try:
         # Check if user has access to the model in bot_info's model_config
         if st.session_state.bot_info['model_config']['model'] not in st.session_state.user['key_supported_models_list']:
@@ -72,131 +71,66 @@ def handler_start_session():
         bot_message = chat_session['session_response']['bot_message']
         st.session_state.session_msg_list.append({'is_user':False, 'message':bot_message})
     except s.OpenAIError as e:
-        del st.session_state['user']
-        st.session_state.user_validated = 0 
-        del st.session_state['bot_info']
-        st.session_state.bot_validated = 0 
+        _cleanup_handler_start_session_exception()
         st.error(f"{e}")
-    except s.BadRequest as e:
-        del st.session_state['bot_info']
-        st.session_state.bot_validated = 0 
-        st.error("Something went wrong. Could not start a session with the AI assistant. Please try again later.")
-    except s.SessionNotRecorded as e:
-        del st.session_state['bot_info']
-        st.session_state.bot_validated = 0 
+    except (s.SessionNotRecorded, s.PromptNotRecorded, s.MessageNotRecorded)  as e:
+        _cleanup_handler_start_session_exception()
         st.error("Could not start a session with the AI assistant. Please try again later.")
-    except s.PromptNotRecorded as e:
-        del st.session_state['bot_info']
-        st.session_state.bot_validated = 0 
-        st.error("Session creation incomplete. Could not record AI response. Please try again later.")
-    except s.MessageNotRecorded as e:
-        del st.session_state['bot_info']
-        st.session_state.bot_validated = 0 
-        st.error("Session creation incomplete. Could not record AI response. Please try again later.")
+    except (s.BadRequest, Exception) as e:
+        _cleanup_handler_start_session_exception()
+        st.error("Something went wrong. Could not start a session with the AI assistant. Please try again later.")
 
 
 def handler_user_chat():
     user_message = st.session_state.user_chat_input.replace("\n","")
     st.session_state.session_msg_list.append({"message":user_message, "is_user": True})
 
-    #st.write(st.session_state)
-
     s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
+
+    def _cleanup_handler_user_chat_exception():
+        del st.session_state['bot_info']
+        del st.session_state['session_id']
+        st.session_state.bot_validated = 0
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
+
     try:
         session_response = s.get_session_response(session_id=st.session_state.session_id, oai_api_key=st.session_state.user['api_key'], user_message=user_message)
         if session_response:
             st.session_state.session_msg_list.append({"message":session_response['bot_message'], "is_user": False})
         st.session_state.user_chat_input= "" # clearing text box 
-    except s.BadRequest as e:
-        del st.session_state['bot_info']
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        if "session_msg_list" in st.session_state:
-            del st.session_state['session_msg_list']
-        st.error("Could not get AI response. Try again later.")
     except s.OpenAIError as e:
-        del st.session_state['user']
-        st.session_state.user_validated = 0 
-        del st.session_state['bot_info']
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        if "session_msg_list" in st.session_state:
-            del st.session_state['session_msg_list']
+        _cleanup_handler_user_chat_exception()
         st.error(f"{e}")
-    except s.SessionAttributeNotUpdated as e:
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        if "session_msg_list" in st.session_state:
-            del st.session_state['session_msg_list']
-        st.error("Could not get AI response. Try again later.")
-    except s.PromptNotRecorded as e:
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        if "session_msg_list" in st.session_state:
-            del st.session_state['session_msg_list']
-        st.error("Could not get AI response. Try again later.")
-    except s.MessageNotRecorded as e: 
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        if "session_msg_list" in st.session_state:
-            del st.session_state['session_msg_list']
-        st.error("Could not get AI response. Try again later.")
-    except Exception as e: 
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        if "session_msg_list" in st.session_state:
-            del st.session_state['session_msg_list']
+    except (s.SessionAttributeNotUpdated, s.PromptNotRecorded, s.MessageNotRecorded)  as e:
+        _cleanup_handler_user_chat_exception()
+        st.error("Session or chat data could not be recorded. Please try again later.")
+    except (s.BadRequest, Exception) as e: 
+        _cleanup_handler_user_chat_exception()
         st.error("Unknown error. Try again later.")
-
-
 
 
 def handler_session_end():
     s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
 
+    def _cleanup_handler_session_end_exception():
+        del st.session_state['bot_info']
+        del st.session_state['session_id']
+        st.session_state.bot_validated = 0
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
+
     try:
         session_response = s.get_session_response(session_id=st.session_state.session_id, oai_api_key=st.session_state.user['api_key'], user_message=st.session_state.bot_info['summary_prompt_msg'])
         if session_response:
             st.session_state.session_msg_list.append({"message":session_response['bot_message'], "is_user": False})
-    except s.BadRequest as e:
-        del st.session_state['bot_info']
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        if "session_msg_list" in st.session_state:
-            del st.session_state['session_msg_list']
-        st.error("Could not get AI response. Try again later.")
     except s.OpenAIError as e: 
-        del st.session_state['user']
-        st.session_state.user_validated = 0 
-        del st.session_state['bot_info']
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        if "session_msg_list" in st.session_state:
-            del st.session_state['session_msg_list']
-        st.error(f"{e}")
-    except s.SessionAttributeNotUpdated as e:
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        if "session_msg_list" in st.session_state:
-            del st.session_state['session_msg_list']
-        st.error("Could not get AI response. Try again later.")
-    except s.PromptNotRecorded as e:
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        if "session_msg_list" in st.session_state:
-            del st.session_state['session_msg_list']
-        st.error("Could not get AI response. Try again later.")
-    except s.MessageNotRecorded as e: 
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        if "session_msg_list" in st.session_state:
-            del st.session_state['session_msg_list']
-        st.error("Could not get AI response. Try again later.")
-    except Exception as e: 
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
-        if "session_msg_list" in st.session_state:
-            del st.session_state['session_msg_list']
+        _cleanup_handler_session_end_exception()
+    except (s.SessionAttributeNotUpdated, s.PromptNotRecorded, s.MessageNotRecorded) as e:
+        _cleanup_handler_session_end_exception()
+        st.error("Session was not wrapped up properly. Please try again later.")
+    except (s.BadRequest , Exception) as e: 
+        _cleanup_handler_session_end_exception()
         st.error("Unknown error. Try again later.")
     st.session_state.session_ended = 1 
     st.session_state.user_chat_input= "" # clearing text box 
