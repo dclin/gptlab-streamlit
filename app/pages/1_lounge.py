@@ -39,11 +39,10 @@ def view_bot_grid(bot_dict, button_disabled=False, show_bot_id=False):
                 else:
                     colb.markdown(f"{bot_dict[i]['name']} - {bot_dict[i]['tag_line']}  \nAssistant ID: {bot_dict[i]['id']}")
             col1.write(bot_dict[i]['description'])
-            if 'user_validated' in st.session_state and st.session_state.user_validated == 1:
+            if 'user'in st.session_state and st.session_state.user['id'] is not None:
                 col1.write(f"Session{'s' if bot_dict[i]['sessions_started'] > 1 else ''}: {bot_dict[i]['sessions_started']}")
             if col1.button(button_label, key=button_key, disabled=button_disabled):
                 st.session_state.bot_info=bot_dict[i]
-                st.session_state.bot_validated = 1           
                 au.switch_page('assistant')
             col1.write("\n\n")
         else:
@@ -55,11 +54,10 @@ def view_bot_grid(bot_dict, button_disabled=False, show_bot_id=False):
                 else:
                     col2b.markdown(f"{bot_dict[i]['name']} - {bot_dict[i]['tag_line']}  \nAssistant ID: {bot_dict[i]['id']}")
             col2.write(bot_dict[i]['description'])
-            if 'user_validated' in st.session_state and st.session_state.user_validated == 1:
+            if 'user'in st.session_state and st.session_state.user['id'] is not None:
                 col2.write(f"Session{'s' if bot_dict[i]['sessions_started'] > 1 else ''}: {bot_dict[i]['sessions_started']}")
             if col2.button(button_label, key=button_key, disabled=button_disabled):
                 st.session_state.bot_info=bot_dict[i]
-                st.session_state.bot_validated = 1           
                 au.switch_page('assistant')
             col2.write("\n\n")
 
@@ -77,16 +75,14 @@ st.write("Explore our Lounge and hang out with featured AI Assistants. Chat with
 ac.robo_avatar_component()
 st.markdown("  \n")
 
-if 'user_validated' not in st.session_state or st.session_state.user_validated != 1:
+if 'user' not in st.session_state or st.session_state.user['id'] is None:
     st.write("\n")
     uu = lu.app_user()
     uu.view_get_info()
 
     st.write("Come chat with our pre-trained AI assistants.")
     view_bot_grid(bot_dict=sb, button_disabled=True)
-
-
-if 'user_validated' in st.session_state and st.session_state.user_validated == 1:
+else:
     button_enabled = False 
     mb = b.get_bots(user_id=st.session_state.user['id'])
     showcased_bots, my_bots  = st.tabs(['Showcased', 'My AI Assistants'])

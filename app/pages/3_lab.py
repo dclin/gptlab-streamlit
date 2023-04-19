@@ -3,8 +3,8 @@ import api_bots as ab
 import api_sessions as asessions 
 
 import app_user as uv 
-import app_component as au
 import app_utils as vutil
+import app_component as au
 
 st.set_page_config(
     page_title="GPT Lab - Lab",
@@ -333,6 +333,35 @@ def render_lab_step_three():
     col2.button("Looks good. Create {0}!".format(bot_name), key='lab_bot_creation_confirm', on_click=handler_lab_step_three_confirm, disabled=bot_creation_disallowed)
 
 
+def render_lab_step_four():
+    st.title("Lab")
+    st.markdown(factory_intro)
+    #st.markdown("---")
+    au.robo_avatar_component()
+    st.write("\n")
+    st.write("Congratulations on creating your own personalized AI Assistant!")
+    st.info(f"Here is your personalized AI code: {st.session_state.lab_bot_id}.")
+    st.write("Share this code with others to allow them to interact with your AI in the Assistnat page. Also, you can always find all your AI assistants in the Lounge.") 
+
+    col1, col2 = st.columns(2)
+
+    if col1.button("Create another AI"):
+        handle_lab_restart()
+
+    if col2.button("Back to Lounge"):
+        vutil.switch_page('lounge')
+
+
+
+def render_lab_login():
+    st.title("Lab")
+    st.markdown(factory_intro)
+    au.robo_avatar_component()
+    st.write("\n")
+    vu = uv.app_user()
+    vu.view_get_info()
+
+
 
 def handle_lab_restart():
     if "lab_bot" in st.session_state:
@@ -349,6 +378,7 @@ def handle_lab_restart():
         del st.session_state.lab_model_max_tokens_input
 
     st.session_state.lab_active_step = 1
+    st.experimental_rerun()
 
 
 def handler_lab_step_one_confirm():
@@ -469,18 +499,6 @@ def handler_user_chat():
 
 button_enabled = True 
 
-if 'user_validated' in st.session_state and st.session_state.user_validated == 1:
-    button_enabled = False 
-
-if 'user' not in st.session_state or st.session_state.user_validated != 1:
-    st.title("Lab")
-    st.markdown(factory_intro)
-    #st.markdown("---")
-    au.robo_avatar_component()
-    st.write("\n")
-    vu = uv.app_user()
-    vu.view_get_info()
-
 if 'lab_active_step' not in st.session_state:
     st.session_state.lab_active_step = 1
 
@@ -491,30 +509,20 @@ if 'lab_msg_list' not in st.session_state:
 if 'lab_bot_id' not in st.session_state:
     st.session_state.lab_bot_id = None 
 
+if 'user' not in st.session_state or st.session_state.user['id'] is None:
+    render_lab_login()
+else:
+    button_enabled = False 
 
-if st.session_state.user_validated == 1 and st.session_state.lab_active_step == 1:
-    # overwrite the model list based on models that user's API key has access to 
-    ai_models_list = st.session_state.user['key_supported_models_list']
-    render_lab_step_one()
-
-if st.session_state.user_validated == 1 and st.session_state.lab_active_step == 2:
-    render_lab_step_two()
-
-if st.session_state.user_validated == 1 and st.session_state.lab_active_step == 3:
-    render_lab_step_three()
-
-if st.session_state.user_validated == 1 and st.session_state.lab_active_step == 4 and st.session_state.lab_bot_id != None:
-    st.title("Lab")
-    st.markdown(factory_intro)
-    #st.markdown("---")
-    au.robo_avatar_component()
-    st.write("\n")
-    st.write("Congratulations on creating your own personalized AI Assistant!")
-    st.info(f"Here is your personalized AI code: {st.session_state.lab_bot_id}.")
-    st.write("Share this code with others to allow them to interact with your AI in the Assistnat page. Also, you can always find all your AI assistants in the Lounge.") 
-    col1, col2 = st.columns(2)
-    col1.button("Create another AI", on_click=handle_lab_restart())
-    if col2.button("Back to Lounge"):
-        vutil.switch_page('lounge')
+    if st.session_state.lab_active_step == 1:
+        # overwrite the model list based on models that user's API key has access to 
+        ai_models_list = st.session_state.user['key_supported_models_list']
+        render_lab_step_one()
+    elif st.session_state.lab_active_step == 2:
+        render_lab_step_two()
+    elif st.session_state.lab_active_step == 3:
+        render_lab_step_three()
+    elif st.session_state.lab_active_step == 4 and st.session_state.lab_bot_id != None:
+        render_lab_step_four()
 
 # st.write(st.session_state)

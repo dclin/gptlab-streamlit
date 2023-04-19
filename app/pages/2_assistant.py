@@ -25,7 +25,6 @@ def handler_bot_search(search_container=None, user_search_str=None):
         b = abots.bots()
         bot = b.get_bot(user_search_str)
         st.session_state.bot_info = bot 
-        st.session_state.bot_validated = 1 
         return True 
     except b.BotNotFound as e: 
         if search_container:
@@ -49,7 +48,6 @@ def handler_start_session():
             del st.session_state['session_bot_id']
         if "session_msg_list" in st.session_state:
             del st.session_state['session_msg_list']
-        st.session_state.bot_validated = 0
 
     try:
         # Check if user has access to the model in bot_info's model_config
@@ -106,7 +104,6 @@ def handler_user_chat():
             del st.session_state['session_bot_id']
         if "session_msg_list" in st.session_state:
             del st.session_state['session_msg_list']
-        st.session_state.bot_validated = 0
 
     try:
         session_response = s.get_session_response(session_id=st.session_state.session_id, oai_api_key=st.session_state.user['api_key'], user_message=user_message)
@@ -142,7 +139,6 @@ def handler_session_end():
             del st.session_state['session_bot_id']
         if "session_msg_list" in st.session_state:
             del st.session_state['session_msg_list']
-        st.session_state.bot_validated = 0
 
     try:
         session_response = s.get_session_response(session_id=st.session_state.session_id, oai_api_key=st.session_state.user['api_key'], user_message=st.session_state.bot_info['summary_prompt_msg'])
@@ -174,7 +170,6 @@ def handler_session_rating(liked):
 
 
 def handler_bot_cancellation():
-    st.session_state.bot_validated = 0 
     del st.session_state.bot_info 
     url_params = st.experimental_get_query_params()
     if bool(url_params) == True and 'assistant_id' in url_params:
@@ -190,10 +185,8 @@ def handler_load_past_session(session_id,bot_id):
             st.session_state.session_msg_list.append({'is_user':True,'message':session_message['message']})
         else:
             st.session_state.session_msg_list.append({'is_user':False, 'message': session_message['message']})
-    st.session_state['session_id']=session_id
-    st.session_state.bot_validated = 1
-    st.session_state['session_bot_id']=bot_id
-
+    st.session_state.session_id=session_id
+    st.session_state.session_bot_id=bot_id
 
 def handler_generate_chat_csv():
     chat_message = st.session_state.session_msg_list
@@ -222,7 +215,6 @@ def handler_back_to_lounge():
         del st.session_state['session_ended']
     if "session_msg_list" in st.session_state:
         del st.session_state['session_msg_list']
-    st.session_state.bot_validated = 0
     vutil.switch_page('lounge')
 
 
@@ -386,30 +378,15 @@ def render_message(is_user, bot_name, message):
         avatar_url = "https://api.dicebear.com/5.x/bottts-neutral/svg?seed={0}&radius=25".format(bot_name) 
 
     col1, col2 = st.columns([1, 5], gap="small")
-    #col1, col2, col3 = st.columns([1, 5, 1], gap="small")
     col1.image(avatar_url, width=50)
     col2.markdown(message.replace("\n","  \n"))
-    # if is_user == True:
-    #     col3.image(avatar_url, width=50)
-    # else:
-    #     col1.image(avatar_url, width=50)
 
     st.write("\n")
 
 
 ## STATE MANAGEMENT
-
-if "user_validated" not in st.session_state:
-    st.session_state.user_validated = 0
-
-if "bot_validated" not in st.session_state:
-    st.session_state.bot_validated = 0
-
 if "session_ended" not in st.session_state:
     st.session_state.session_ended = 0 
-
-if st.session_state.user_validated != 1:
-    render_user_login_required()
 
 if "session_bot_id" in st.session_state and "bot_info" in st.session_state: 
     # mix match between session bot ID and bot id 
@@ -420,30 +397,33 @@ if "session_bot_id" in st.session_state and "bot_info" in st.session_state:
         del st.session_state['session_bot_id']
         del st.session_state['session_id']
 
-# "bot_id" does not exist in session_state
-if st.session_state.user_validated == 1 and st.session_state.bot_validated == 0:
-
-    url_params = st.experimental_get_query_params()
-    if bool(url_params) == True and 'assistant_id' in url_params:
-        if url_params['assistant_id'][0] != "":
-            bot_found = handler_bot_search(user_search_str=url_params['assistant_id'][0])
-            if bot_found == False:
-                st.error("Assistant in URL cannot be found")
-                st.experimental_set_query_params(assistant_id="")
-                render_bot_search() 
+if 'user' not in st.session_state or st.session_state.user['id'] is None:
+    render_user_login_required()
+else:
+    if 'bot_info' not in st.session_state: 
+        # first check url_params for asssitant_id 
+        url_params = st.experimental_get_query_params()
+        if bool(url_params) == True and 'assistant_id' in url_params:
+            if url_params['assistant_id'][0] != "":
+                bot_found = handler_bot_search(user_search_str=url_params['assistant_id'][0])
+                if bot_found == False:
+                    st.error("Assistant in URL cannot be found")
+                    st.experimental_set_query_params(assistant_id="")
+                    render_bot_search() 
+                else: 
+                    # bot found. Get UI to re-render 
+                    st.experimental_rerun()
+        else:
+            render_bot_search()
     else:
-        render_bot_search()
-
-if st.session_state.user_validated == 1 and st.session_state.bot_validated == 1 and "session_id" not in st.session_state:
-    if "initial_summary_prompt_msg" in st.session_state.bot_info:
-        render_bot_details(st.session_state.bot_info)    
-    else:
-        handler_bot_search(user_search_str=st.session_state.bot_info['id'])
-        render_bot_details(st.session_state.bot_info)    
-
-
-if st.session_state.user_validated == 1 and st.session_state.bot_validated == 1 and "session_id" in st.session_state:
-    render_chat_session()
+        if "session_id" not in st.session_state:
+            if "initial_summary_prompt_msg" in st.session_state.bot_info:
+                render_bot_details(st.session_state.bot_info)    
+            else:
+                handler_bot_search(user_search_str=st.session_state.bot_info['id'])
+                render_bot_details(st.session_state.bot_info)    
+        else:
+            render_chat_session()
 
 with st.sidebar:
     ac.st_button(url="https://twitter.com/dclin", label="Let's connect", font_awesome_icon="fa-twitter")

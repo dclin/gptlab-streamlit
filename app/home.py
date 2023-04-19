@@ -48,7 +48,7 @@ st.markdown("""\n""")
 st.markdown("#### Get Started")
 
 vu = uv.app_user()
-if 'user' not in st.session_state or st.session_state.user_validated != 1:
+if 'user' not in st.session_state or st.session_state.user['id'] is None:
     vu.view_get_info()
 else:
     vu.view_success_confirmation()

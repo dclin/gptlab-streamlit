@@ -12,8 +12,6 @@ class app_user:
     def __init__(self):
         if 'user' not in st.session_state:
             st.session_state.user = {'id':None, 'api_key':None, 'user_hash': None, 'key_supported_models_list':[]}
-        if 'user_validated' not in st.session_state:
-            st.session_state.user_validated = None 
         self.container = st.container()
         
     def _get_info(self):
@@ -35,7 +33,6 @@ class app_user:
         try:
             user = u.get_create_user(api_key=st.session_state.user_key_input)           
             self._set_info(user_id=user['id'], api_key = st.session_state.user_key_input, user_hash=user['data']['user_hash'], key_supported_models_list=user['data']['supported_models_list'])
-            st.session_state.user_validated = 1 
         except u.OpenAIError as e: 
             with self.container:
                 st.error(f"{str(e)}")
@@ -49,7 +46,7 @@ class app_user:
 
 if __name__ == '__main__':
     vu = app_user()
-    if 'user_validated' not in st.session_state or st.session_state.user_validated != 1:
+    if 'user' not in st.session_state or st.session_state.user['id'] is None:
         vu.view_get_info()
     else:
         vu.view_success_confirmation()
