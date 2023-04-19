@@ -15,7 +15,9 @@ class users:
         pass
 
     class OpenAIError(Exception):
-        pass
+        def __init__(self, message, error_type=None):
+            super().__init__(message)
+            self.error_type = error_type 
 
     class DBError(Exception):
         pass
@@ -116,8 +118,8 @@ class users:
             o = ou.open_ai(api_key=api_key, restart_sequence='|USER|', stop_sequence='|SP|')
             validation_info = o.validate_key()
             supported_models_list = validation_info['supported_models_list']
-        except Exception as e: 
-            raise self.OpenAIError(f"{str(e)}") from e 
+        except o.OpenAIError as e:  
+            raise self.OpenAIError(f"{str(e)}", error_type=e.error_type) from e 
 
         user_hash = gu.hash_user_string(api_key)
 

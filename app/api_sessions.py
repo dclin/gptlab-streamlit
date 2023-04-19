@@ -28,8 +28,10 @@ class sessions:
     class DBAttributeError(Exception):
         pass
 
-    class OpenAIError(Exception): 
-        pass 
+    class OpenAIError(Exception):
+        def __init__(self, message, error_type=None):
+            super().__init__(message)
+            self.error_type = error_type 
 
     class SessionStatus(enum.Enum):
         STARTED = 0
@@ -59,15 +61,20 @@ class sessions:
         try: 
             if bot_id != None:
                 new_session = self._create_session(user_id=user_id, bot_id=bot_id, overwritten_model=overwritten_model)
-            if bot_config_dict != None: 
+            elif bot_config_dict != None: 
                 new_session = self._create_session(user_id=user_id, bot_config_dict=bot_config_dict)
-            if bot_id == None and bot_config_dict == None: 
+            else: 
                 raise self.BadRequest("Bad request: missing both Assistant ID and Assistant config")
         except Exception as e: 
             raise 
-
+        
         try: 
             bot_response = self.get_session_response(session_id=new_session['session_id'], oai_api_key=oai_api_key)
+        except self.OpenAIError as e: 
+            gu.logging.warning(f"Newly created session {new_session['session_id']} status SYSTEM_ABANDONED_OPENAI | OpenAIError | Exception: {e}")
+            self.end_session(session_id=new_session['session_id'], end_status=self.SessionStatus.SYSTEM_ABANDONED_OPENAI.value)
+            raise self.OpenAIError(f"{str(e)}", error_type=e.error_type) from e 
+
         except Exception as e: 
             raise 
 
@@ -131,9 +138,12 @@ class sessions:
                 content_moderation_check = o.get_moderation(user_message=user_message)
                 current_session_messages.append({'role':'user','message':user_message,'created_date':gu.get_current_time()})
             except o.OpenAIError as e: 
-                gu.logging.warning(f"Session {session_id} status SYSTEM_ABANDONED_OPENAI | OpenAIError | Exception: {e}")
-                self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED_OPENAI.value)
-                raise self.OpenAIError(f"{str(e)}") from e 
+                if e.error_type == "RateLimitError":
+                    gu.logging.warning(f"Session {session_id} moderation check impacted due to OpenAI rate limit | OpenAIError | Exception: {e}") 
+                else:
+                    gu.logging.warning(f"Session {session_id} status SYSTEM_ABANDONED_OPENAI | OpenAIError | Exception: {e}")
+                    self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED_OPENAI.value)
+                raise self.OpenAIError(f"{str(e)}", error_type=e.error_type) from e 
 
         try:
             responded_messages = o.get_ai_response(
@@ -144,9 +154,14 @@ class sessions:
                 session_type=current_session['data']['bot_session_type']
             )
         except o.OpenAIError as e: 
-            gu.logging.warning(f"Session {session_id} status SYSTEM_ABANDONED_OPENAI | OpenAIError | Exception: {e}")
-            self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED_OPENAI.value)
-            raise self.OpenAIError(f"{str(e)}") from e 
+            if e.error_type == "RateLimitError":
+                gu.logging.warning(f"Session {session_id} response impacted due to OpenAI rate limit | OpenAIError | Exception: {e}") 
+            else:
+                gu.logging.warning(f"Session {session_id} status SYSTEM_ABANDONED_OPENAI | OpenAIError | Exception: {e}")
+                self.end_session(session_id=session_id, end_status=self.SessionStatus.SYSTEM_ABANDONED_OPENAI.value)
+            raise self.OpenAIError(f"{str(e)}", error_type=e.error_type) from e 
+        except Exception as e: 
+            raise 
 
         try:
             self._update_session_messages(session_id, responded_messages)
@@ -278,8 +293,8 @@ class sessions:
 
         try:
             session_type = bot.get_session_type(bot_dict['session_type'])
-        except Exception as e: 
-            raise        
+        except ValueError as e: 
+            raise self.BadRequest("Bad Request: Assisant configured with unknown session type")       
 
         # session dictionary 
         # updating data model - caching prompt messages and model configs - to avoid having to read bot dict for values 

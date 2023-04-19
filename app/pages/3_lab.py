@@ -378,7 +378,10 @@ def handler_lab_step_one_confirm():
             st.session_state.lab_msg_list.append({'is_user':False, 'message':bot_message})
         except s.OpenAIError as e: 
             st.session_state.lab_active_step = 1
-            st.error(f"{e}")
+            if e.error_type == "RateLimitError" and str(e) == "OpenAI: You exceeded your current quota, please check your plan and billing details.": 
+                st.error(f"Could not start a session with the AI assistant.  \n  \n{e}  \n  \n**Friendly reminder:** If you are using a free-trial OpenAI API key, this error is caused by the extremely low rate limits associated with the key. To optimize your chat experience, we recommend upgrading to the pay-as-you-go OpenAI plan. Please see our FAQ for more information.")
+            else:
+                st.error(f"Could not start a session with the AI assistant.  \n  \n{e}")
         except (s.BadRequest, s.SessionNotRecorded, s.MessageNotRecorded, s.PromptNotRecorded, Exception) as e:
             st.session_state.lab_active_step = 1
             del st.session_state['lab_bot']
@@ -449,6 +452,9 @@ def handler_user_chat():
     try:
         session_response = s.get_session_response(session_id=st.session_state.lab_session_id, oai_api_key=st.session_state.user['api_key'], user_message=user_message)
         if session_response:
+            if session_response['user_message_flagged'] == True:
+                flagged_categories_str = ", ".join(session_response['user_message_flagged_categories'])
+                st.warning(f"Your most recent chat message was flagged by OpenAI's content moderation endpoint for: {flagged_categories_str}")
             st.session_state.lab_msg_list.append({"message":session_response['bot_message'], "is_user": False})
         st.session_state.lab_user_chat_input= "" # clearing text box 
     except s.OpenAIError as e: 

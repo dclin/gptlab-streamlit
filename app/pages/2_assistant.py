@@ -41,8 +41,15 @@ def handler_bot_search(search_container=None, user_search_str=None):
 def handler_start_session():
 
     def _cleanup_handler_start_session_exception():
-        del st.session_state['bot_info']
-        st.session_state.bot_validated = 0 
+        if "bot_info" in st.session_state:
+            del st.session_state['bot_info']
+        if "session_id" in st.session_state:
+            del st.session_state['session_id']
+        if "session_bot_id" in st.session_state:
+            del st.session_state['session_bot_id']
+        if "session_msg_list" in st.session_state:
+            del st.session_state['session_msg_list']
+        st.session_state.bot_validated = 0
 
     try:
         # Check if user has access to the model in bot_info's model_config
@@ -72,7 +79,10 @@ def handler_start_session():
         st.session_state.session_msg_list.append({'is_user':False, 'message':bot_message})
     except s.OpenAIError as e:
         _cleanup_handler_start_session_exception()
-        st.error(f"{e}")
+        if e.error_type == "RateLimitError" and str(e) == "OpenAI: You exceeded your current quota, please check your plan and billing details.": 
+            st.error(f"{e}  \n  \n**Friendly reminder:** If you are using a free-trial OpenAI API key, this error is caused by the extremely low rate limits associated with the key. To optimize your chat experience, we recommend upgrading to the pay-as-you-go OpenAI plan. Please see our FAQ for more information.")
+        else:
+            st.error(f"{e}")
     except (s.SessionNotRecorded, s.PromptNotRecorded, s.MessageNotRecorded)  as e:
         _cleanup_handler_start_session_exception()
         st.error("Could not start a session with the AI assistant. Please try again later.")
@@ -88,20 +98,30 @@ def handler_user_chat():
     s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
 
     def _cleanup_handler_user_chat_exception():
-        del st.session_state['bot_info']
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
+        if "bot_info" in st.session_state:
+            del st.session_state['bot_info']
+        if "session_id" in st.session_state:
+            del st.session_state['session_id']
+        if "session_bot_id" in st.session_state:
+            del st.session_state['session_bot_id']
         if "session_msg_list" in st.session_state:
             del st.session_state['session_msg_list']
+        st.session_state.bot_validated = 0
 
     try:
         session_response = s.get_session_response(session_id=st.session_state.session_id, oai_api_key=st.session_state.user['api_key'], user_message=user_message)
         if session_response:
+            if session_response['user_message_flagged'] == True:
+                flagged_categories_str = ", ".join(session_response['user_message_flagged_categories'])
+                st.warning(f"Your most recent chat message was flagged by OpenAI's content moderation endpoint for: {flagged_categories_str}")
             st.session_state.session_msg_list.append({"message":session_response['bot_message'], "is_user": False})
         st.session_state.user_chat_input= "" # clearing text box 
     except s.OpenAIError as e:
         _cleanup_handler_user_chat_exception()
-        st.error(f"{e}")
+        if e.error_type == "RateLimitError" and str(e) == "OpenAI: You exceeded your current quota, please check your plan and billing details.": 
+            st.error(f"{e}  \n  \n**Friendly reminder:** If you are using a free-trial OpenAI API key, this error is caused by the extremely low rate limits associated with the key. To optimize your chat experience, we recommend upgrading to the pay-as-you-go OpenAI plan. Please see our FAQ for more information.")
+        else:
+            st.error(f"{e}")
     except (s.SessionAttributeNotUpdated, s.PromptNotRecorded, s.MessageNotRecorded)  as e:
         _cleanup_handler_user_chat_exception()
         st.error("Session or chat data could not be recorded. Please try again later.")
@@ -114,11 +134,15 @@ def handler_session_end():
     s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
 
     def _cleanup_handler_session_end_exception():
-        del st.session_state['bot_info']
-        del st.session_state['session_id']
-        st.session_state.bot_validated = 0
+        if "bot_info" in st.session_state:
+            del st.session_state['bot_info']
+        if "session_id" in st.session_state:
+            del st.session_state['session_id']
+        if "session_bot_id" in st.session_state:
+            del st.session_state['session_bot_id']
         if "session_msg_list" in st.session_state:
             del st.session_state['session_msg_list']
+        st.session_state.bot_validated = 0
 
     try:
         session_response = s.get_session_response(session_id=st.session_state.session_id, oai_api_key=st.session_state.user['api_key'], user_message=st.session_state.bot_info['summary_prompt_msg'])
@@ -139,7 +163,7 @@ def handler_session_end():
     except Exception as e:
         pass # purposely swallow all sort of exceptions. no point trouble users
 
-def handle_session_rating(liked):
+def handler_session_rating(liked):
 
     s = asessions.sessions(user_hash=st.session_state['user']['user_hash'])
     user_liked = s.UserLiked.LIKED.value 
@@ -186,6 +210,23 @@ def handler_generate_chat_csv():
     return csv_buffer.getvalue()    
 
 
+# centralize logic to go back to the lounge 
+def handler_back_to_lounge(): 
+    if "bot_info" in st.session_state:
+        del st.session_state['bot_info']
+    if "session_id" in st.session_state:
+        del st.session_state['session_id']
+    if "session_bot_id" in st.session_state:
+        del st.session_state['session_bot_id']
+    if "session_ended" in st.session_state:
+        del st.session_state['session_ended']
+    if "session_msg_list" in st.session_state:
+        del st.session_state['session_msg_list']
+    st.session_state.bot_validated = 0
+    vutil.switch_page('lounge')
+
+
+
 def render_user_login_required():
     st.title("AI Assistant")
     st.write("Discover other Assistants in the Lounge, or locate a specific Assistant by its personalized code.")
@@ -207,16 +248,7 @@ def render_bot_search():
         st.text_input("Find an AI Assistant by entering its personalized code", key = "bot_search_input", on_change=handler_bot_search, args=(search_container,))
     st.write("or")
     if st.button("Back to Lounge"):
-        if "bot_info" in st.session_state:
-            del st.session_state['bot_info']
-        if "session_id" in st.session_state:
-            del st.session_state['session_id']
-        st.session_state.session_ended = 0 
-        st.session_state_bot_validated = 0
-        if "session_msg_list" in st.session_state:
-            del st.session_state['session_msg_list']
-        vutil.switch_page('lounge')
-
+        handler_back_to_lounge()
 
 
 def render_bot_details(bot):
@@ -237,7 +269,7 @@ def render_bot_details(bot):
         label="GPT Model", 
         options=(
             st.session_state.user['key_supported_models_list']),
-            key='lab_model_name', 
+            key='assistant_model_name', 
             help="The assistant's default GPT model is currently selected. You may overwrite the model by selecting a different one.",
             index=st.session_state.user['key_supported_models_list'].index(st.session_state.bot_info['model_config']['model']),
     )
@@ -331,8 +363,8 @@ def render_chat_session():
         with st.container():
             col1, col2, col3, col4 = st.columns([3,1,1,2]) 
             col1.write(f"Did you enjoy your session with {st.session_state.bot_info['name']}?")
-            col2.button("👍", use_container_width=True, on_click=handle_session_rating, args=(True,))
-            col3.button("👎", use_container_width=True, on_click=handle_session_rating, args=(False,))
+            col2.button("👍", use_container_width=True, on_click=handler_session_rating, args=(True,))
+            col3.button("👎", use_container_width=True, on_click=handler_session_rating, args=(False,))
 
 
         st.write("")
@@ -342,18 +374,7 @@ def render_chat_session():
         col1.download_button("Download chat session", data=csv_data, file_name="chat_session.csv", mime="text/csv")
 
         if col2.button("Return to lounge"):
-            if "bot_info" in st.session_state:
-                del st.session_state['bot_info']
-            if "session_id" in st.session_state:
-                del st.session_state['session_id']
-            if "session_bot_id" in st.session_state:
-                del st.session_state['session_bot_id']
-            st.session_state.session_ended = 0 
-            st.session_state.bot_validated = 0
-            if "session_msg_list" in st.session_state:
-                del st.session_state['session_msg_list']
-            vutil.switch_page('lounge')
-
+            handler_back_to_lounge
         
 
 
@@ -430,4 +451,4 @@ with st.sidebar:
     ac.st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
 
 
-# st.write(st.session_state)
+st.write(st.session_state)

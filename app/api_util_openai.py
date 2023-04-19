@@ -2,13 +2,15 @@ import openai
 import streamlit as st 
 import api_util_general as gu 
 import time 
+import sys 
 
 
 class open_ai:
 
     class OpenAIError(Exception):
-        pass 
-
+        def __init__(self, message, error_type=None):
+            super().__init__(message)
+            self.error_type = error_type 
 
     def __init__(self, api_key, restart_sequence, stop_sequence):
         self.api_key = api_key
@@ -39,7 +41,7 @@ class open_ai:
                     backoff *= 2
                     tries +=1
                 else:
-                    raise self.OpenAIError(f"OpenAI: {str(e)}") from e 
+                    raise self.OpenAIError(f"OpenAI: {str(e)}", error_type=type(e).__name__) from e 
 
     def get_ai_response(self, session_type, model_config_dict, init_prompt_msg, summary_prompt_msg, messages):
         """Main function to get an AI chat response. It also condenses the message chain accordingly"""

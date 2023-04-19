@@ -222,7 +222,10 @@ class bots:
         return bot_id 
 
     def get_session_type(self, session_type_str):
-            return self.SessionType[session_type_str].value
+            try:
+                return self.SessionType[session_type_str].value
+            except KeyError: 
+                raise ValueError(f"Invalid session type: '{session_type_str}'")
 
 ### TESTING ###
 
