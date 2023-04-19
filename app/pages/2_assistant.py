@@ -374,7 +374,7 @@ def render_chat_session():
         col1.download_button("Download chat session", data=csv_data, file_name="chat_session.csv", mime="text/csv")
 
         if col2.button("Return to lounge"):
-            handler_back_to_lounge
+            handler_back_to_lounge()
         
 
 
