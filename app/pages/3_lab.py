@@ -155,6 +155,8 @@ def render_lab_step_one():
     if 'lab_bot' not in st.session_state:
         col2.number_input(label="AI Response Token Limit", key='lab_model_max_tokens', min_value=0, max_value=max_token_limit, value=250, step=50, help=help_msg_max_token, disabled=button_enabled)
     else:
+        if st.session_state.lab_model_max_tokens_input >= max_token_limit: 
+            st.session_state.lab_model_max_tokens_input = max_token_limit 
         col2.number_input(label="AI Response Token Limit", key='lab_model_max_tokens', min_value=0, max_value=max_token_limit, value=st.session_state.lab_model_max_tokens_input, step=50, help=help_msg_max_token, disabled=button_enabled)
     st.session_state.lab_model_max_tokens_input = st.session_state.lab_model_max_tokens
 
