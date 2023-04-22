@@ -315,7 +315,7 @@ def render_lab_step_three():
 
     st.markdown("##### Summary prompt and session type")
 
-    st.text_area(label="Summary Prompt", key="lab_prompt_summary", help=help_msg_summary_prompt, max_chars=500)
+    st.text_area(label="Summary Prompt", key="lab_prompt_summary", help=help_msg_summary_prompt, max_chars=500, placeholder="Summarize what we have discussed today.")
     st.selectbox(label="Session Type", key='lab_bot_session_type', help=help_msg_session_type, options = [t[0] for t in session_types], index=0)
 
     st.markdown("\n")
@@ -339,9 +339,7 @@ def render_lab_step_four():
     #st.markdown("---")
     au.robo_avatar_component()
     st.write("\n")
-    st.write("Congratulations on creating your own personalized AI Assistant!")
-    st.info(f"Here is your personalized AI code: {st.session_state.lab_bot_id}.")
-    st.write("Share this code with others to allow them to interact with your AI in the Assistnat page. Also, you can always find all your AI assistants in the Lounge.") 
+    st.success(f"#### 🎉🎉 **Congratulations on creating {st.session_state['lab_bot']['name']}! 🎉🎉**  \n * {st.session_state['lab_bot']['name']} is now waiting for you in the lounge.  \n  * You can also share {st.session_state['lab_bot']['name']} with your friends and family by giving them this [shareable link](/assistant?assistant_id={st.session_state.lab_bot_id}) or {st.session_state['lab_bot']['name']}'s unique code: `{st.session_state.lab_bot_id}`. They can search for {st.session_state['lab_bot']['name']} on the Assistant page with this code.")
 
     col1, col2 = st.columns(2)
 
