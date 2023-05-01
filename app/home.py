@@ -30,8 +30,6 @@ st.markdown(
 st.markdown(f"""# {home_title} <span style=color:#2E9BF5><font size=5>Beta</font></span>""",unsafe_allow_html=True)
 
 st.markdown("""\n""")
-st.markdown("""\n""")
-st.success("We're always looking to improve GPT Lab and make it even better for our users. That's why we want to hear from you! Please take a few minutes to complete our [short survey](https://forms.gle/A9Vb8WB5p5eVCLRk7)  and share your experiences and feedback. Your valuable input will help shape the future of GPT Lab and make it an even better app for everyone. Thank you for your participation and for being a part of the GPT Lab community!")
 st.markdown("#### Greetings")
 st.write(home_introduction)
 
