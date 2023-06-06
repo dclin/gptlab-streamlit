@@ -33,7 +33,7 @@ db-key = ""
 global_salt = ""
 ```
 
-    - You will need to generate a service account JSON, and convert that JSON file to TOML. Follow the instructions [here](https://blog.streamlit.io/streamlit-firestore-continued/). 
+- You will need to generate a service account JSON, and convert that JSON file to TOML. Follow the instructions [here](https://blog.streamlit.io/streamlit-firestore-continued/). 
 
 4. In your terminal, set up your local envionrment: 
     - Set up a Python virtual environment (using `venv`, `conda`, `virtualenv`, or any other tool you prefer)
