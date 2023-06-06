@@ -27,10 +27,10 @@ To run the app locally, you will need to:
 3. Create a .streamlit/secrets.toml file containing the following:
 ```
 [firestore]
-db-key = ""
+db-key = "YOUR GOOGLE SERVICE ACCOUNT TOML"
 
 [util]
-global_salt = ""
+global_salt = "OPTIONAL GLOBAL SALT"
 ```
 
 - You will need to generate a service account JSON, and convert that JSON file to TOML. Follow the instructions [here](https://blog.streamlit.io/streamlit-firestore-continued/). 
