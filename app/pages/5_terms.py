@@ -26,23 +26,23 @@ st.write("Last updated: 2023-04-09")
 st.header("Terms of Use")
 
 st.info("""
-Welcome to GPT Lab, a platform provided by GPT Lab LLC ("GPT Lab," "we," or "us"). By accessing our website, you agree to comply with the following terms of service. Please read these terms carefully. If you do not agree to these terms, you should not use our website.
+Welcome to GPT Lab, a platform hosted by GPT Lab LLC ("GPT Lab," "we," or "us"). By accessing our hosted services, you agree to comply with the following terms of service. These terms specifically apply to the hosted version of our services. The open source code used for these services is provided under the MIT License. Please read these terms and the license agreement carefully. If you do not agree to these terms or the license agreement, you should not use our hosted services or the open source code.
 """)
 
 st.markdown("""
-##### 1. Use of our Website  \n 
-GPT Lab LLC provides a user-friendly platform for creating and interacting with AI Assistants powered by OpenAI's GPT language model. By using our website, you agree to use it only for lawful purposes and in a manner that does not infringe the rights of or restrict or inhibit the use and enjoyment of our website by any third party. We reserve the right to terminate your access to our website at any time if we reasonably believe that you have breached any of these terms of service.
+##### 1. Use of Our Hosted Services  \n 
+GPT Lab LLC provides a user-friendly platform for creating and interacting with AI Assistants powered by OpenAI's GPT language model. These terms apply specifically to the use of our hosted version of this platform. By using our hosted services, you agree to use them only for lawful purposes and in a manner that does not infringe the rights of or restrict or inhibit the use and enjoyment of our services by any third party. We reserve the right to terminate your access to our hosted services at any time if we reasonably believe that you have breached any of these terms of service.
 
 ##### 2. Eligibility \n
-To use GPT Lab, you must be at least 18 years of age or the legal age of majority in your jurisdiction (if different). You must also have an OpenAI API Key to access the AI models used by GPT Lab.
+To use the hosted services provided by GPT Lab, you must be at least 18 years of age or the legal age of majority in your jurisdiction (if different). You must also have an OpenAI API Key to access the AI models used by GPT Lab.
 
 ##### 3. OpenAI's Usage Policy  \n
 OpenAI wants everyone to use their tools safely and responsibly. That’s why OpenAI has created usage policies that apply to all users of their models, tools, and services. By following these policies, users will ensure that OpenAI's technology is used for good. If OpenAI discovers that a user's product or usage doesn't follow these policies, they may ask the user to make necessary changes. Repeated or serious violations may result in further action, including suspending or terminating the user's account.
 
 OpenAI's policies may change as they learn more about use and abuse of their models. To learn more about OpenAI's usage policy, please visit https://platform.openai.com/docs/usage-policies.
 
-##### 4. Feedback  \n
-We value your feedback on GPT Lab and appreciate any comments, suggestions, or ideas you may have for improving our platform ("Feedback"). By providing Feedback, you grant us a non-exclusive, transferable, worldwide, perpetual, irrevocable, fully-paid, royalty-free license, with the right to sublicense, to use, copy, modify, create derivative works based upon, and otherwise use the Feedback for any purpose. You acknowledge that your Feedback does not contain any confidential or proprietary information belonging to you or any third party. While we welcome your Feedback, you agree that we are not obliged to act on any Feedback you provide. You also agree to indemnify and hold GPT Lab LLC and its affiliates, officers, agents, employees, and licensors harmless from any claim or demand, including reasonable attorneys’ fees, made by any third party due to or arising out of your Feedback, as set forth in the Indemnification section below.
+##### 4. Feedback for the Hosted Platform  \n
+We value your feedback on the hosted version of GPT Lab and appreciate any comments, suggestions, or ideas you may have for improving our platform ("Feedback"). By providing Feedback, you grant us a non-exclusive, transferable, worldwide, perpetual, irrevocable, fully-paid, royalty-free license, with the right to sublicense, to use, copy, modify, create derivative works based upon, and otherwise use the Feedback for any purpose. You acknowledge that your Feedback does not contain any confidential or proprietary information belonging to you or any third party. While we welcome your Feedback on the hosted service, you agree that we are not obliged to act on any Feedback you provide. You also agree to indemnify and hold GPT Lab LLC and its affiliates, officers, agents, employees, and licensors harmless from any claim or demand, including reasonable attorneys’ fees, made by any third party due to or arising out of your Feedback, as set forth in the Indemnification section below.
 
 ##### 5. Privacy Policy  \n
 At GPT Lab, we take your privacy very seriously. Our application only uses your OpenAI API Key during sessions to interact with the AI models. To ensure your confidentiality and security, we use a one-way hashing algorithm on your OpenAI Key to generate your unique user identity rather than collecting or storing Personal-Identifiable-Information (PII). We also use a symmetric AES-128 encryption algorithm, with a unique key for each user, to encrypt your chat transcripts with the AI Assistants. Lastly, we do store the AI assistant prompts, which can be reviewed and audited periodically to ensure no misuse. For more information about our privacy practices, please visit our privacy policy.
@@ -96,19 +96,19 @@ st.markdown("  \n  \n  \n  \n")
 st.header("Privacy Policy")
 
 st.markdown("""
-At GPT Lab, we value your privacy and are committed to protecting it. Here's how we handle your data:
+At GPT Lab, we value your privacy and are committed to protecting it when you use our hosted platform. Here's how we handle your data:
 
 ##### 1. OpenAI API Key  \n
-When you sign in to GPT Lab, we require you to enter your OpenAI API Key. Our application uses your Key during sessions to interact with the AI models and to tie your AI Assistants and sessions to your unique user identity. We do not store your OpenAI API Key in plaintext. To ensure your confidentiality and security, we use a one-way hashing algorithm on your Open AI API Key to generate your unique user identity rather than collecting or storing Personal-Identifiable-Information (PII).
+When you sign in to GPT Lab hosted service, we require you to enter your OpenAI API Key. Our application uses your Key during sessions to interact with the AI models and to tie your AI Assistants and sessions to your unique user identity. We do not store your OpenAI API Key in plaintext. To ensure your confidentiality and security, we use a one-way hashing algorithm on your Open AI API Key to generate your unique user identity rather than collecting or storing Personal-Identifiable-Information (PII).
 
 ##### 2. AI Assistant Prompts and User Chat Session Messages  \n
-Your AI Assistant Prompts and your chat session messages are transmitted and processed by OpenAI. We store both on our servers, but they are only tied to your anonymized user identifier, generated from the hashed value of your OpenAI API Key. Your information is encrypted at rest and in transit by our cloud provider (Google) and limited to authorized personnel. Additionally, we symmetrically encrypt your session messages with a unique key assigned to you before storing them on our server, ensuring they remain private on our server. The prompts are stored unencrypted and may be reviewed and audited periodically to ensure compliance with our Terms.
+Your AI Assistant Prompts and your chat session messages on the hosted platform are transmitted and processed by OpenAI. We store both on our Google Firestore database (located in central United States), but they are only tied to your anonymized user identifier, generated from the hashed value of your OpenAI API Key. Your information is encrypted at rest and in transit by our cloud provider (Google) and limited to authorized personnel. Additionally, we symmetrically encrypt your session messages with a unique key assigned to you before storing them on our server, ensuring they remain private on our server. The prompts are stored unencrypted and may be reviewed and audited periodically to ensure compliance with our Terms.
 
 ##### 3. Cookies  \n
-We currently do not use cookies. However, we reserve the right to use cookies in the future to improve your experience and enhance the security of our platform. If we do, we will update this Privacy Policy to reflect the changes.
+Our hosted service currently currently does not use cookies. However, we reserve the right to use cookies in the future to improve your experience and enhance the security of our platform. If we do, we will update this Privacy Policy to reflect the changes.
 
 ##### 4. "Buy Me a Coffee" and Newsletters  \n
 If you choose to donate to our "Buy Me a Coffee" link (hosted by [Buy Me a Coffee](https://www.buymeacoffee.com)) (THANK YOU!) or subscribe to our newsletter (hosted by [BeeHiiv](https://www.beehiiv.com)), your email address will be collected and stored by the respective platforms for the purpose of contacting you in the future. Please refer to their respective privacy policies for more information. We do not collect and store these information from third-party services.
 
-By using GPT Lab, you consent to this Privacy Policy. If you have any questions or concerns about our privacy policy, please contact us at hello@gptlab.app.
+By using the hosted version of GPT Lab, you consent to this Privacy Policy. If you have any questions or concerns about our privacy policy, please contact us at hello@gptlab.app.
 """)
