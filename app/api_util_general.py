@@ -8,6 +8,7 @@ import base64
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import logging 
+import streamlit as st 
 
 
 # basic logging configuration 
@@ -32,13 +33,13 @@ def _generate_user_key(user_hash):
 # user hash is used to generate the symmetric key 
 def encrypt_user_message(user_hash, user_message):
     user_message_byte = user_message.encode('utf-8')
-    cipher = Fernet(_generate_user_key(user_hash))
+    cipher = Fernet(_generate_user_key(user_hash + st.secrets["util"]["global_salt"]))
     return cipher.encrypt(user_message_byte)
 
 # decrypt user message using Fernet encryption 
 # user hash is used to generate the symmetric key 
 def decrypt_user_message(user_hash, cipher_text):
-    cipher = Fernet(_generate_user_key(user_hash))
+    cipher = Fernet(_generate_user_key(user_hash + st.secrets["util"]["global_salt"]))
     return cipher.decrypt(cipher_text).decode('utf-8')
 
 
