@@ -22,7 +22,7 @@ with st.sidebar:
 au.render_cta()    
 
 st.title("Terms")
-st.write("Last updated: 2023-04-09")
+st.write("Last updated: 2023-06-06")
 st.header("Terms of Use")
 
 st.info("""
