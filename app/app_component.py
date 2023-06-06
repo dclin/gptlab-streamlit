@@ -53,3 +53,10 @@ def st_button(url, label, font_awesome_icon):
     st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">', unsafe_allow_html=True)
     button_code = f'''<a href="{url}" target=_blank><i class="fa {font_awesome_icon}"></i>   {label}</a>'''
     return st.markdown(button_code, unsafe_allow_html=True)
+
+
+def render_cta():
+  with st.sidebar:
+      st_button(url="https://twitter.com/dclin", label="Let's connect", font_awesome_icon="fa-twitter")
+      st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")
+      st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")

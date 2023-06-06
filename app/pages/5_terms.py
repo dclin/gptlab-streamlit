@@ -19,10 +19,7 @@ with st.sidebar:
     ---
     ''', unsafe_allow_html=True)
 
-    au.st_button(url="https://twitter.com/dclin", label="Let's connect", font_awesome_icon="fa-twitter")
-    au.st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")
-    au.st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
-
+au.render_cta()    
 
 st.title("Terms")
 st.write("Last updated: 2023-04-09")

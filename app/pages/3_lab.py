@@ -18,12 +18,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-with st.sidebar:
-    au.st_button(url="https://twitter.com/dclin", label="Let's connect", font_awesome_icon="fa-twitter")
-    au.st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")
-    au.st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
-
-
+au.render_cta()
 
 factory_intro="Create your own custom AI assistant in three easy steps. Access it later in the Lounge or share it with friends and family. Unleash endless possibilities with your own AI assistant!"
 
