@@ -47,7 +47,7 @@ global_salt = "OPTIONAL GLOBAL SALT"
 ## Contributions
 Contributions are welcomed. Simply open up an issue and create a pull request. If you are introducing new features, please provide a detailed description of the specific use case you are addressing and setup instructions to test. 
 
-Aside: I am new to open source, work full-time,  and have young kids, please bare with me if I don't get back to you right away. 
+Aside: I am new to open source, work full-time,  and have young kids, please bear with me if I don't get back to you right away. 
 
 ## License
 This project is licensed under the terms of the MIT License. See [LICENSE](LICENSE) for more details.
