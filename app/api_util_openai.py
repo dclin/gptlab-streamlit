@@ -2,7 +2,7 @@ import openai
 import streamlit as st 
 import api_util_general as gu 
 import time 
-import sys 
+import logging 
 
 
 class open_ai:
@@ -17,6 +17,7 @@ class open_ai:
         openai.api_key = api_key 
         self.stop_sequence = stop_sequence
         self.restart_sequence = restart_sequence
+        openai.util.logger.setLevel(logging.WARNING)
 
 
     def _invoke_call(self, call_string, max_tries=3, initial_backoff=1):

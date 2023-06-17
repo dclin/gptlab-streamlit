@@ -4,4 +4,4 @@ gatherUsageStats = false
 [logger]
 # Level of logging: 'error', 'warning', 'info', or 'debug'.
 # Default: 'info'
-level = "info"
+level = "warning"
