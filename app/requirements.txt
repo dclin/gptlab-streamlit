@@ -33,12 +33,12 @@ MarkupSafe==2.1.2
 mdurl==0.1.2
 multidict==6.0.4
 numpy==1.24.1
-openai==0.27.4
+openai==0.27.8
 packaging==23.0
 pandas==1.5.3
 Pillow==9.4.0
 proto-plus==1.22.2
-protobuf==3.19.5
+protobuf==4.23.3
 pyarrow==10.0.1
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
@@ -58,7 +58,8 @@ scipy==1.10.1
 semver==2.13.0
 six==1.16.0
 smmap==5.0.0
-streamlit==1.21.0
+streamlit==1.23.1
+tenacity==8.2.2
 threadpoolctl==3.1.0
 toml==0.10.2
 toolz==0.12.0
