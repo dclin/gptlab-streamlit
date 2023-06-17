@@ -3,15 +3,6 @@ import streamlit.components.v1 as c
 import random as r 
 
 
-
-#@st.cache(show_spinner=False, suppress_st_warning=True,ttl=600)
-def buy_me_coffee_component():
-    c.html("""
-    <div style="position: fixed; bottom: 5px; right: 5px;">
-    <a href="https://www.buymeacoffee.com/gptlab" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/arial-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
-    </div>
-    """, height=70)
-
 #@st.cache(show_spinner=False, suppress_st_warning=True,ttl=600)
 def robo_avatar_component():
 
@@ -35,19 +26,6 @@ def robo_avatar_component():
     
     c.html(robo_html, height=70)
 
-#@st.cache(show_spinner=False, suppress_st_warning=True,ttl=600)
-def email_subscription_component():
-  subscription_html = """
-  <iframe src="https://embeds.beehiiv.com/f6b878de-073b-4ba2-a900-1f42e5fcfc0b?slim=true" 
-          data-test-id="beehiiv-embed" 
-          frameborder="0" 
-          scrolling="no" 
-          style="margin: 0; 
-          border-radius: 5px !important; 
-          background-color: transparent;">
-  </iframe>"""
-  c.html(subscription_html, height=80)
-
 
 def st_button(url, label, font_awesome_icon):
     st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">', unsafe_allow_html=True)
@@ -58,5 +36,5 @@ def st_button(url, label, font_awesome_icon):
 def render_cta():
   with st.sidebar:
       st_button(url="https://twitter.com/dclin", label="Let's connect", font_awesome_icon="fa-twitter")
-      st_button(url="https://www.buymeacoffee.com/gptlab", label="Buy me a coffee", font_awesome_icon="fa-coffee")
-      st_button(url="https://gptlab.beehiiv.com/subscribe", label="Subscribe to news and updates", font_awesome_icon="fa-newspaper-o")
+      st_button(url="http://linkedin.com/in/d2clin/", label="Let's connect", font_awesome_icon="fa-linkedin")
+      st_button(url="https://github.com/dclin/gptlab-streamlit", label="Source code", font_awesome_icon="fa-github")

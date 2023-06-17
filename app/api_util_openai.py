@@ -76,7 +76,7 @@ class open_ai:
         try:
             models = self._get_models()
             models_list = [model.id for model in models['data']]
-            gpt_lab_models_list = ['gpt-4-32k','gpt-4','gpt-3.5-turbo', 'text-davinci-003', 'text-curie-001', 'text-babbage-001', 'text-ada-001']
+            gpt_lab_models_list = ['gpt-4-32k','gpt-4','gpt-3.5-turbo-16k', 'gpt-3.5-turbo', 'text-davinci-003', 'text-curie-001', 'text-babbage-001', 'text-ada-001']
             key_supported_models_list = [model for model in gpt_lab_models_list if model in models_list] 
             #print(key_supported_models_list)
             return {'validated': True, 'supported_models_list': key_supported_models_list}
@@ -123,6 +123,8 @@ class open_ai:
             model_token_max = 32768
         elif model_config_dict['model'] == 'gpt-4':
             model_token_max = 8192
+        elif model_config_dict['model'] == 'gpt-3.5-turbo-16k':
+            model_token_max = 16384
         elif model_config_dict['model'] in ('gpt-3.5-turbo', 'text-davinci-003'):
             model_token_max = 4096
                 
@@ -148,7 +150,7 @@ class open_ai:
         total_tokens = 0
         prompt_injection_detected = 0 
 
-        if model_config_dict['model'] in ('gpt-3.5-turbo', 'gpt-4', 'gpt-4-32k'):
+        if model_config_dict['model'] in ('gpt-3.5-turbo', 'gpt-3.5-turbo-16k', 'gpt-4', 'gpt-4-32k'):
             try:
                 response = self._get_chat_completion(model_config_dict, submit_messages)
                 bot_message = response['choices'][0]['message']['content']

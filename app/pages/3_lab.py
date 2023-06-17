@@ -32,7 +32,7 @@ help_msg_personality="Personalize your AI's responses by selecting from pre-defi
 help_msg_model="""
 A model in AI refers to a specific version of an AI language processing system. The models offered in the dropdown are:  \n
 * gpt-4-32k and gpt-4 (if you have access to them): Newest and most advanced text-based models from OpenAI, offering state-of-the-art performance in natural language understanding, generation, and a wide range of other language processing tasks. GPT-4-32k offers the same capabilities as GPT-4 but with 4x the context length. Note that GPT-4 is currently in a limited beta and only accessible to those who have been granted.  \n
-* gpt-3.5-turbo: Same model as the default ChatGPT model. Great for advanced language processing tasks and generating human-like text. \n
+* gpt-3.5-turbo-16k	and gpt-3.5-turbo: Same model as the default ChatGPT model. Great for advanced language processing tasks and generating human-like text. \n
 * text-davinci-003: This is the most advanced model, capable of handling a wide range of tasks including natural language understanding and generation, question answering, summarization, and translation.  \n
 * text-curie-001: This model is optimized for answering questions and providing information, making it ideal for chatbots and virtual assistants.  \n
 * text-babbage-001: This model is designed for coding assistance, providing help with syntax and code completion.  \n
@@ -98,7 +98,7 @@ model_params = {
 
 model_personality_list = list(model_params.keys())
 
-ai_models_list = ['gpt-3.5-turbo', 'text-davinci-003', 'text-curie-001', 'text-babbage-001', 'text-ada-001']
+ai_models_list = ['gpt-3.5-turbo', 'gpt-3.5-turbo-16k', 'text-davinci-003', 'text-curie-001', 'text-babbage-001', 'text-ada-001']
 
 
 b = ab.bots()
