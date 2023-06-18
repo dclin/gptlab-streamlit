@@ -417,7 +417,7 @@ else:
             render_bot_search()
     else:
         if "session_id" not in st.session_state:
-            if "initial_summary_prompt_msg" in st.session_state.bot_info:
+            if "initial_prompt_msg" in st.session_state.bot_info:
                 render_bot_details(st.session_state.bot_info)    
             else:
                 handler_bot_search(user_search_str=st.session_state.bot_info['id'])
@@ -427,4 +427,4 @@ else:
 
 ac.render_cta()
 
-# st.write(st.session_state)
+st.write(st.session_state)
