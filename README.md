@@ -8,10 +8,124 @@ GPT Lab is also featured in the [Streamlit App Gallery](https://streamlit.io/gal
 For more insight into the development process and lessons learned while building GPT Lab, check out this [blog post](https://blog.streamlit.io/building-gpt-lab-with-streamlit/) on the official Streamlit blog.
 
 This README will cover: 
+- Code structure
+- Data models
 - Accessing the app
 - Running the app Locally
 - Contributions
 - License
+
+## Code structure
+```
++----------------+     +-------------------+     +-------------------+     +------------+
+|                |     |                   |     |                   |     |            |
+|  Streamlit App |<--->| util_collections  |<--->| api_util_firebase |<--->|  Firestore |
+|                |     | (users, sessions, |     |                   |     |            |
+|                |     |  bots)            |     |                   |     |            |
++----------------+     +-------------------+     +-------------------+     +------------+
+                             |
+                             |
+                             v
+                     +-----------------+     +------------+
+                     |                 |     |            |
+                     | api_util_openai |<--->|   OpenAI   |
+                     |                 |     |            |
+                     +-----------------+     +------------+
+```
+
+## Data models
+```
+Users Collection
+   |
+   | - id: (Firestore auto-ID)
+   | - user_hash: string (one-way hash value of OpenAI API key)
+   | - created_date: datetime
+   | - last_modified_date: datetime
+   | - sessions_started: number
+   | - sessions_ended: number
+   | - bots_created: number
+```
+
+```
+User_hash Collection
+   |
+   | - id = one-way hash value of OpenAI API key
+   | - user_hash_type: string (open_ai_key)
+   | - created_date: datetime
+```
+
+```
+Bots Collection
+   |
+   | - id: (Firestore auto-ID)
+   | - name: string
+   | - tag_line: string
+   | - description: string
+   | - session_type: number
+   | - creator_user_id: string
+   | - created_date: datetime
+   | - last_modified_date: datetime
+   | - active_initial_prompt_id: string
+   | - active_model_config_id: string
+   | - active_summary_prompt_id: string
+   | - showcased: boolean
+   | - is_active: boolean
+   |
+   v
+   |--> Model_configs subcollection
+   |     |
+   |     | - config: map
+   |     |     | - model: string 
+   |     |     | - max_tokens: number 
+   |     |     | - temperature: number 
+   |     |     | - top_p: number 
+   |     |     | - frequency_penalty: number 
+   |     |     | - presence_penalty: number 
+   |     | - created_date: datetime
+   |     | - is_active: boolean
+   |
+   v
+   |--> Prompts subcollection
+         |
+         | - message_type: string
+         | - message: string
+         | - created_date: datetime
+         | - is_active: boolean
+         | - sessions_started: number
+         | - sessions_ended: number
+```
+
+```
+Sessions Collection
+   |
+   | - id: (Firestore auto-ID)
+   | - user_id: string
+   | - bot_id: string
+   | - bot_initial_prompt_msg: string
+   |
+   | - bot_model_config: map
+   |     | - model: string 
+   |     | - max_tokens: number 
+   |     | - temperature: number 
+   |     | - top_p: number 
+   |     | - frequency_penalty: number 
+   |     | - presence_penalty: number 
+   |
+   | - bot_session_type: number
+   | - bot_summary_prompt_msg: string
+   | - created_date: datetime
+   | - session_schema_version: number
+   | - status: number
+   | - message_count: number
+   | - messages_str: string (encrypted)
+   |
+   v
+   |--> Messages subcollection
+         |
+         | - created_date: datetime
+         | - message: string (encrypted)
+         | - role: string
+```
 
 ## Accessing the app 
 You can access the app on the Streamlit Cloud community at [gptlab.streamlit.app](https://gptlab.streamlit.app/). 
