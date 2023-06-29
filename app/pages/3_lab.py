@@ -242,19 +242,14 @@ def render_lab_step_two():
 
 def render_message(is_user, message):
     avatar_url = "https://api.dicebear.com/5.x/avataaars-neutral/svg?seed=ARoN&radius=25&backgroundColor=f8d25c"
+    chat_name = "user" 
 
     if is_user == False:
         avatar_url = "https://api.dicebear.com/5.x/bottts-neutral/svg?seed=gptLAb&radius=25" 
+        chat_name = "assistant"
 
-    col1, col2 = st.columns([1, 5], gap="small")
-    #col1, col2, col3 = st.columns([1, 5, 1], gap="small")
-    col1.image(avatar_url, width=50)
-    col2.markdown(message.replace("\n","  \n"))
-    # if is_user == True:
-    #     col3.image(avatar_url, width=50)
-    # else:
-    #     col1.image(avatar_url, width=50)
-    st.write("\n")
+    with st.chat_message(name=chat_name, avatar=avatar_url):
+        st.markdown(message.replace("\n","  \n"))
 
 
 def render_lab_step_three():

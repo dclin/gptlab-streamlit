@@ -339,9 +339,8 @@ def render_chat_session():
         st.markdown("""___""")
         # Chat module 
         for i in range(len(st.session_state.session_msg_list)-1,-1,-1): # chat in st.session_state.session_msg_list:
-            render_message(st.session_state.session_msg_list[i]['is_user'], st.session_state.bot_info['name'], st.session_state.session_msg_list[i]['message'])
+                render_message(st.session_state.session_msg_list[i]['is_user'], st.session_state.bot_info['name'], st.session_state.session_msg_list[i]['message'])
     
-    # st.write(st.session_state)
 
     if st.session_state.session_ended == 1: 
         st.write("Session Recap")
@@ -374,14 +373,14 @@ def render_chat_session():
 def render_message(is_user, bot_name, message):
     avatar_url = "https://api.dicebear.com/5.x/avataaars-neutral/svg?seed=ARoN&radius=25&backgroundColor=f8d25c"
 
+    chat_name = "user" 
+
     if is_user == False:
         avatar_url = "https://api.dicebear.com/5.x/bottts-neutral/svg?seed={0}&radius=25".format(bot_name) 
+        chat_name = bot_name 
 
-    col1, col2 = st.columns([1, 5], gap="small")
-    col1.image(avatar_url, width=50)
-    col2.markdown(message.replace("\n","  \n"))
-
-    st.write("\n")
+    with st.chat_message(name=chat_name, avatar=avatar_url):
+        st.markdown(message.replace("\n","  \n"))
 
 
 ## STATE MANAGEMENT
