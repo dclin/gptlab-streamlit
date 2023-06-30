@@ -227,17 +227,10 @@ def render_lab_step_two():
     col1.button("Back to Step 1", disabled=button_enabled, on_click=handler_lab_step_one_return)
     col2.button("Looks Good. Proceed to Step 3", disabled=button_enabled, on_click=handler_lab_step_two_confirm)
 
-    st.text_input(                
-        "Talk to AI", 
-        key = "lab_user_chat_input",
-        on_change=handler_user_chat,
-        disabled=button_enabled
-    )
-        
-    st.markdown("""___""")
-    # Chat module 
-    for i in range(len(st.session_state.lab_msg_list)-1,-1,-1): # chat in st.session_state.session_msg_list:
-        render_message(st.session_state.lab_msg_list[i]['is_user'], st.session_state.lab_msg_list[i]['message'])    
+    for message in st.session_state.lab_msg_list:
+        render_message(message['is_user'], message['message'])
+    
+    st.chat_input(key="lab_user_chat_input", on_submit=handler_user_chat, disabled=button_enabled)
 
 
 def render_message(is_user, message):
@@ -476,7 +469,7 @@ def handler_user_chat():
                 flagged_categories_str = ", ".join(session_response['user_message_flagged_categories'])
                 st.warning(f"Your most recent chat message was flagged by OpenAI's content moderation endpoint for: {flagged_categories_str}")
             st.session_state.lab_msg_list.append({"message":session_response['bot_message'], "is_user": False})
-        st.session_state.lab_user_chat_input= "" # clearing text box 
+
     except s.OpenAIError as e: 
         st.session_state.lab_active_step = 1
         del st.session_state['lab_bot']

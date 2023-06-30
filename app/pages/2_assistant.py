@@ -112,7 +112,7 @@ def handler_user_chat():
                 flagged_categories_str = ", ".join(session_response['user_message_flagged_categories'])
                 st.warning(f"Your most recent chat message was flagged by OpenAI's content moderation endpoint for: {flagged_categories_str}")
             st.session_state.session_msg_list.append({"message":session_response['bot_message'], "is_user": False})
-        st.session_state.user_chat_input= "" # clearing text box 
+
     except s.OpenAIError as e:
         _cleanup_handler_user_chat_exception()
         if e.error_type == "RateLimitError" and str(e) == "OpenAI: You exceeded your current quota, please check your plan and billing details.": 
@@ -153,7 +153,7 @@ def handler_session_end():
         _cleanup_handler_session_end_exception()
         st.error("Unknown error. Try again later.")
     st.session_state.session_ended = 1 
-    st.session_state.user_chat_input= "" # clearing text box 
+
     try:
         s.end_session(st.session_state['session_id'])
     except Exception as e:
@@ -329,18 +329,10 @@ def render_chat_session():
                 help=f"After concluding your chat with {st.session_state.bot_info['name']}, you will be able to view a recap of your session, download a transcript of your chat, and rate your session."
                 )
 
-        # input box 
-        st.text_input(
-            "Talk to {0}".format(st.session_state.bot_info['name']), 
-            key = "user_chat_input",
-            on_change=handler_user_chat
-        )
-            
-        st.markdown("""___""")
-        # Chat module 
-        for i in range(len(st.session_state.session_msg_list)-1,-1,-1): # chat in st.session_state.session_msg_list:
-                render_message(st.session_state.session_msg_list[i]['is_user'], st.session_state.bot_info['name'], st.session_state.session_msg_list[i]['message'])
-    
+        for message in st.session_state.session_msg_list:
+            render_message(message['is_user'], st.session_state.bot_info['name'], message['message'])
+        
+        st.chat_input(key="user_chat_input", on_submit=handler_user_chat)
 
     if st.session_state.session_ended == 1: 
         st.write("Session Recap")
