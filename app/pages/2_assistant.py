@@ -170,10 +170,9 @@ def handler_session_rating(liked):
 
 
 def handler_bot_cancellation():
-    del st.session_state.bot_info 
-    url_params = st.experimental_get_query_params()
-    if bool(url_params) == True and 'assistant_id' in url_params:
-        st.experimental_set_query_params(assistant_id="")
+    del st.session_state.bot_info
+    if 'assistant_id' in st.query_params:
+        del st.query_params['assistant_id']
 
 
 def handler_load_past_session(session_id,bot_id):
@@ -391,19 +390,18 @@ if "session_bot_id" in st.session_state and "bot_info" in st.session_state:
 if 'user' not in st.session_state or st.session_state.user['id'] is None:
     render_user_login_required()
 else:
-    if 'bot_info' not in st.session_state: 
-        # first check url_params for asssitant_id 
-        url_params = st.experimental_get_query_params()
-        if bool(url_params) == True and 'assistant_id' in url_params:
-            if url_params['assistant_id'][0] != "":
-                bot_found = handler_bot_search(user_search_str=url_params['assistant_id'][0])
-                if bot_found == False:
-                    st.error("Assistant in URL cannot be found")
-                    st.experimental_set_query_params(assistant_id="")
-                    render_bot_search() 
-                else: 
-                    # bot found. Get UI to re-render 
-                    st.experimental_rerun()
+    if 'bot_info' not in st.session_state:
+        # first check url_params for assistant_id
+        assistant_id = st.query_params.get('assistant_id', '')
+        if assistant_id:
+            bot_found = handler_bot_search(user_search_str=assistant_id)
+            if bot_found == False:
+                st.error("Assistant in URL cannot be found")
+                del st.query_params['assistant_id']
+                render_bot_search()
+            else:
+                # bot found. Get UI to re-render
+                st.rerun()
         else:
             render_bot_search()
     else:

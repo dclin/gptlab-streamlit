@@ -361,7 +361,7 @@ def handle_lab_restart():
         del st.session_state.lab_model_max_tokens_input
 
     st.session_state.lab_active_step = 1
-    st.experimental_rerun()
+    st.rerun()
 
 
 def handler_lab_step_one_confirm():
